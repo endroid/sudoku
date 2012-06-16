@@ -1,6 +1,8 @@
 Endroid Sudoku Solver
 =====================
 
+The library that solves Sudoku puzzles in a jiffy.
+
 Example usage
 -------------
 
