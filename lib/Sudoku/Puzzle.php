@@ -4,12 +4,12 @@ namespace Sudoku;
 
 class Puzzle {
 
-	public $cells;
-    public $cellsSolved = 0;
-    public $debug = false;
-    public $isSolved = false;
+	protected $cells;
+    protected $cellsSolved = 0;
+    protected $debug = false;
+    protected $isSolved = false;
 
-	public function __construct($values = null) {
+    public function __construct($values = null) {
 
 		// First create all cells
 		for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
@@ -51,6 +51,11 @@ class Puzzle {
 			}
 	    }
 
+        // If the input is a string, convert it to an array
+        if (is_string($values)) {
+            $values = $this->toArray($values);
+        }
+
 	    // Set the initial values
 	    if ($values !== null) {
 			for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
@@ -64,6 +69,27 @@ class Puzzle {
 
 	}
 
+    protected function toArray($values)
+    {
+        // Filter all but digits
+        $values = preg_replace('#[^0-9]*#i', '', $values);
+
+        // Create the rows
+        $values = str_split($values, 9);
+
+        // Create the columns
+        foreach ($values as &$row) {
+            $row = str_split($row);
+        }
+
+        return $values;
+    }
+
+    public function incrementCellsSolved()
+    {
+        $this->cellsSolved++;
+    }
+
     public function isSolved()
     {
         return ($this->cellsSolved == 81);
@@ -76,7 +102,7 @@ class Puzzle {
             $progress = false;
             for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
                 for ($colIndex = 0; $colIndex < 9; $colIndex++) {
-                    if ($this->cells[$rowIndex][$colIndex]->shouldUpdateAdjacentCells) {
+                    if ($this->cells[$rowIndex][$colIndex]->getShouldUpdateAdjacentCells()) {
                         $this->cells[$rowIndex][$colIndex]->updateAdjacentCells();
                         $progress = true;
                     }
@@ -97,8 +123,8 @@ class Puzzle {
         // Calculate all possible moves
         for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
             for ($colIndex = 0; $colIndex < 9; $colIndex++) {
-                foreach ($this->cells[$rowIndex][$colIndex]->options as $option) {
-                    if ($this->cells[$rowIndex][$colIndex]->value === null) {
+                foreach ($this->cells[$rowIndex][$colIndex]->getOptions() as $option) {
+                    if ($this->cells[$rowIndex][$colIndex]->getValue() === null) {
                         $moves[$option][] = array($rowIndex, $colIndex, $option);
                     }
                 }
@@ -153,15 +179,15 @@ class Puzzle {
         return $this;
     }
 
-    public function copy($sudoku)
+    protected function copy($sudoku)
     {
         for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
             for ($colIndex = 0; $colIndex < 9; $colIndex++) {
-                if ($sudoku->cells[$rowIndex][$colIndex]->value !== null) {
-                    $this->cells[$rowIndex][$colIndex]->setValue($sudoku->cells[$rowIndex][$colIndex]->value);
-                    $this->cells[$rowIndex][$colIndex]->shouldUpdateAdjacent = false;
+                if ($sudoku->cells[$rowIndex][$colIndex]->getValue() !== null) {
+                    $this->cells[$rowIndex][$colIndex]->setValue($sudoku->cells[$rowIndex][$colIndex]->getValue());
+                    $this->cells[$rowIndex][$colIndex]->setShouldUpdateAdjacentCells(false);
                 }
-                $this->cells[$rowIndex][$colIndex]->options = $sudoku->cells[$rowIndex][$colIndex]->options;
+                $this->cells[$rowIndex][$colIndex]->setOptions($sudoku->cells[$rowIndex][$colIndex]->getOptions());
             }
         }
     }

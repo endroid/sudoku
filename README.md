@@ -9,7 +9,7 @@ Example usage
 ``` php
 <?php
 // An easy puzzle
-$sudoku = '
+$values = '
     003020600
     900305001
     001806400
@@ -20,19 +20,8 @@ $sudoku = '
     800203009
     005010300';
 
-// Filter all but digits
-$sudoku = preg_replace('#[^0-9]*#i', '', $sudoku);
-
-// Create the rows
-$sudoku = str_split($sudoku, 9);
-
-// Create the columns
-foreach ($sudoku as &$row) {
-    $row = str_split($row);
-}
-
 // Create the object
-$sudoku = new \Sudoku\Puzzle($sudoku);
+$sudoku = new \Sudoku\Puzzle($values);
 
 // And finally solve the puzzle
 echo $sudoku->solve();
