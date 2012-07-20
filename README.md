@@ -20,8 +20,8 @@ $values = '
     800203009
     005010300';
 
-// Create the object
+// Create the puzzle
 $sudoku = new \Sudoku\Puzzle($values);
 
-// And finally solve the puzzle
+// Solve the puzzle
 echo $sudoku->solve();
