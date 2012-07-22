@@ -3,12 +3,12 @@
 <phpunit bootstrap="./test/bootstrap.php" colors="true">
     <testsuites>
         <testsuite name="Sudoku Test Suite">
-            <directory suffix="Test.php">./test/Sudoku/</directory>
+            <directory suffix="Test.php">./test/Endroid/</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist>
-            <directory suffix=".php">./lib/Sudoku/</directory>
+            <directory suffix=".php">./lib/Endroid/</directory>
         </whitelist>
     </filter>
 </phpunit>

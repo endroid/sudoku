@@ -1,10 +1,10 @@
 <?php
 
-namespace Sudoku\Test;
+namespace Endroid\Test\Sudoku;
 
-use Sudoku\Puzzle;
+use Endroid\Sudoku\Puzzle;
 
-class CurlTest extends \PHPUnit_Framework_TestCase
+class PuzzleTest extends \PHPUnit_Framework_TestCase
 {
     public function testSolveEasy()
     {
@@ -21,7 +21,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
             005010300';
 
         // Create the object
-        $sudoku = new \Sudoku\Puzzle($values);
+        $sudoku = new Puzzle($values);
         $sudoku->solve();
 
         // Check if the puzzle is solved
@@ -44,7 +44,7 @@ class CurlTest extends \PHPUnit_Framework_TestCase
             090000400';
 
         // Create the object
-        $sudoku = new \Sudoku\Puzzle($values);
+        $sudoku = new Puzzle($values);
         $sudoku->solve();
 
         // Check if the puzzle is solved

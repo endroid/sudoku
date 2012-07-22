@@ -1,6 +1,6 @@
 <?php
 
-namespace Sudoku;
+namespace Endroid\Sudoku;
 
 class Cell
 {
