@@ -2,14 +2,14 @@
     "name": "endroid/sudoku",
     "description": "Endroid Sudoku solver",
     "keywords": ["endroid", "sudoku"],
-    "homepage": "https://github.com/jvandenenden/Sudoku",
+    "homepage": "https://github.com/endroid/sudoku",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Jeroen van den Enden",
-            "email": "jeroenvandenenden@gmail.com",
-            "homepage": "http://enden.nl/"
+            "email": "info@endroid.nl",
+            "homepage": "http://endroid.nl/"
         }
     ],
     "require": {
