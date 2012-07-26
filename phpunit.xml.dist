@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="./test/bootstrap.php" colors="true">
+<phpunit bootstrap="./tests/bootstrap.php" colors="true">
     <testsuites>
         <testsuite name="Sudoku Test Suite">
-            <directory suffix="Test.php">./test/Endroid/</directory>
+            <directory suffix="Test.php">./tests/Endroid/</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist>
-            <directory suffix=".php">./lib/Endroid/</directory>
+            <directory suffix=".php">./src/Endroid/</directory>
         </whitelist>
     </filter>
 </phpunit>

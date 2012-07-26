@@ -1,6 +1,6 @@
 <?php
 
-namespace Endroid\Test\Sudoku;
+namespace Endroid\Tests\Sudoku;
 
 use Endroid\Sudoku\Puzzle;
 
