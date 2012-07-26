@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/endroid/sudoku.png)](http://travis-ci.org/endroid/sudoku)
+
 Endroid Sudoku Solver
 =====================
 
@@ -9,7 +11,7 @@ Example usage
 ``` php
 <?php
 // An easy puzzle
-$values = '
+$puzzle = '
     003020600
     900305001
     001806400
@@ -21,7 +23,7 @@ $values = '
     005010300';
 
 // Create the puzzle
-$sudoku = new \Sudoku\Puzzle($values);
+$sudoku = new \Endroid\Sudoku\Puzzle($puzzle);
 
 // Solve the puzzle
 echo $sudoku->solve();
