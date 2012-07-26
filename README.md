@@ -1,7 +1,7 @@
-[![Build Status](https://secure.travis-ci.org/endroid/sudoku.png)](http://travis-ci.org/endroid/sudoku)
-
 Endroid Sudoku Solver
 =====================
+
+[![Build Status](https://secure.travis-ci.org/endroid/sudoku.png)](http://travis-ci.org/endroid/sudoku)
 
 The library that solves Sudoku puzzles in a jiffy.
 
