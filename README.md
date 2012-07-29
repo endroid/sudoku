@@ -1,7 +1,7 @@
 Endroid Sudoku Solver
 =====================
 
-[![Build Status](https://secure.travis-ci.org/endroid/sudoku.png)](http://travis-ci.org/endroid/sudoku)
+[![Build Status](https://secure.travis-ci.org/endroid/Sudoku.png)](http://travis-ci.org/endroid/Sudoku)
 
 The library that solves Sudoku puzzles in a jiffy.
 
@@ -10,6 +10,9 @@ Example usage
 
 ``` php
 <?php
+
+use Endroid\Sudoku\Puzzle;
+
 // An easy puzzle
 $puzzle = '
     003020600
@@ -23,7 +26,7 @@ $puzzle = '
     005010300';
 
 // Create the puzzle
-$sudoku = new \Endroid\Sudoku\Puzzle($puzzle);
+$sudoku = new Puzzle($puzzle);
 
 // Solve the puzzle
 echo $sudoku->solve();
