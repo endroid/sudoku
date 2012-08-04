@@ -22,7 +22,7 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
 
         // Create the object
         $sudoku = new Puzzle($values);
-        $sudoku->solve();
+        $sudoku = $sudoku->solve();
 
         // Check if the puzzle is solved
         $this->assertTrue($sudoku->isSolved());
@@ -44,7 +44,7 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
 
         // Create the object
         $sudoku = new Puzzle($values);
-        $sudoku->solve();
+        $sudoku = $sudoku->solve();
 
         // Check if the puzzle is solved
         $this->assertTrue($sudoku->isSolved());
