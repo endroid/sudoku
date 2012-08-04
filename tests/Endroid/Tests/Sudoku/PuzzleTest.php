@@ -26,7 +26,6 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
 
         // Check if the puzzle is solved
         $this->assertTrue($sudoku->isSolved());
-
     }
 
     public function testSolveHard()
