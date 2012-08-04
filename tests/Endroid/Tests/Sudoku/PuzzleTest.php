@@ -29,9 +29,9 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    /*public function testSolveHard()
+    public function testSolveHard()
     {
-        // An easy puzzle
+        // A difficult puzzle
         $values = '
             800000000
             003600000
@@ -49,5 +49,5 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
 
         // Check if the puzzle is solved
         $this->assertTrue($sudoku->isSolved());
-    }*/
+    }
 }

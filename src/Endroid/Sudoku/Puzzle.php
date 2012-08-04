@@ -123,28 +123,17 @@ class Puzzle {
         // Calculate all possible moves
         for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
             for ($colIndex = 0; $colIndex < 9; $colIndex++) {
+                $optionCount = count($this->cells[$rowIndex][$colIndex]->getOptions());
                 foreach ($this->cells[$rowIndex][$colIndex]->getOptions() as $option) {
                     if ($this->cells[$rowIndex][$colIndex]->getValue() === null) {
-                        $moves[$option][] = array($rowIndex, $colIndex, $option);
+                        $moves[$optionCount][] = array($rowIndex, $colIndex, $option);
                     }
                 }
             }
         }
 
-        // Sort moves by least occurrances first
-        uasort($moves, function($a, $b) {
-            if (count($a) > count($b)) {
-                return 1;
-            } else if (count($a) < count($b)) {
-                return -1;
-            }
-            return 0;
-        });
-
-        // Randomness increases speed
-        foreach ($moves as &$option_moves) {
-            shuffle($option_moves);
-        }
+        // Least options first
+        krsort($moves);
 
         // Try each move
         $progress = true;
