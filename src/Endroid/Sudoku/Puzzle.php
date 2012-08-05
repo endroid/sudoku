@@ -4,10 +4,12 @@ namespace Endroid\Sudoku;
 
 class Puzzle {
 
-	protected $cells;
+    protected $cells;
     protected $cellsSolved = 0;
-    protected $debug = false;
-    protected $isSolved = false;
+
+    protected $moves = array();
+    protected $optionsRemovedByMove = array();
+    protected $cellsSolvedByMove = array();
 
     public function __construct($values = null) {
 
@@ -85,18 +87,23 @@ class Puzzle {
         return $values;
     }
 
-    public function incrementCellsSolved()
+    public function setCellSolved($cell)
     {
+        $this->cellsSolvedByMove[count($this->moves)][] = array($cell, $cell->getOptions());
         $this->cellsSolved++;
     }
 
-    public function isSolved()
+    public function setOptionRemoved($cell, $option)
     {
-        return ($this->cellsSolved == 81);
+        $this->optionsRemovedByMove[count($this->moves)][] = array($cell, $option);
     }
 
     public function solve($depth = 0)
     {
+        if ($depth == 0) {
+            $time = microtime(true);
+        }
+
         $progress = true;
         while ($progress) {
             $progress = false;
@@ -110,15 +117,7 @@ class Puzzle {
             }
         }
 
-        if ($progress && !$this->isSolved()) {
-            return $this->solve($depth + 1);
-        }
-
-        /**
-         * No more simple progress possible : proceed by guessing
-         */
-
-        $moves = array();
+        $movesByCount = array();
 
         // Calculate all possible moves
         for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
@@ -126,59 +125,59 @@ class Puzzle {
                 $optionCount = count($this->cells[$rowIndex][$colIndex]->getOptions());
                 foreach ($this->cells[$rowIndex][$colIndex]->getOptions() as $option) {
                     if ($this->cells[$rowIndex][$colIndex]->getValue() === null) {
-                        $moves[$optionCount][] = array($rowIndex, $colIndex, $option);
+                        $movesByCount[$optionCount][] = array($rowIndex, $colIndex, $option);
                     }
                 }
             }
         }
 
-        // Least options first
-        krsort($moves);
+        ksort($movesByCount);
 
-        // Try each move
-        $progress = true;
-        while ($progress) {
+        foreach ($movesByCount as &$item) {
+            shuffle($item);
+        }
 
-            $progress = false;
-            foreach ($moves as $option => $option_moves) {
-
-                $move = array_pop($moves[$option]);
-
-                if (!$move) {
-                    echo count($moves[$option]);
-                    break;
-                }
-
-                $sudoku = new Puzzle();
-                $sudoku->copy($this);
-
+        foreach ($movesByCount as $moves) {
+            foreach ($moves as $move) {
+                $this->moves[count($this->moves)] = $move;
+                $moveCount = count($this->moves);
+                $this->optionsRemovedByMove[$moveCount] = array();
+                $this->cellsSolvedByMove[$moveCount] = array();
+                $this->cells[$move[0]][$move[1]]->setValue($move[2]);
                 try {
-
-                    $sudoku->cells[$move[0]][$move[1]]->setValue($move[2]);
-                    $sudoku = $sudoku->solve($depth + 1);
-
-                    if ($sudoku->isSolved()) {
-                        return $sudoku;
-                    }
-
-                } catch (\Exception $exception) { }
+                    return $this->solve($depth + 1);
+                } catch (\Exception $exception) {
+                    $this->undo();
+                }
             }
+        }
+
+        if ($depth != 0) {
+            throw new \Exception('No valid options left');
+        } else {
+            $this->time = round(microtime(true) - $time, 3);
         }
 
         return $this;
     }
 
-    protected function copy($sudoku)
+    protected function undo()
     {
-        for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-            for ($colIndex = 0; $colIndex < 9; $colIndex++) {
-                if ($sudoku->cells[$rowIndex][$colIndex]->getValue() !== null) {
-                    $this->cells[$rowIndex][$colIndex]->setValue($sudoku->cells[$rowIndex][$colIndex]->getValue());
-                    $this->cells[$rowIndex][$colIndex]->setShouldUpdateAdjacentCells(false);
-                }
-                $this->cells[$rowIndex][$colIndex]->setOptions($sudoku->cells[$rowIndex][$colIndex]->getOptions());
-            }
+        $moveCount = count($this->moves);
+
+        foreach ($this->cellsSolvedByMove[$moveCount] as $item) {
+            $item[0]->setValue(null);
+            $item[0]->setOptions($item[1]);
+            $this->cellsSolved--;
         }
+
+        foreach ($this->optionsRemovedByMove[$moveCount] as $item) {
+            $item[0]->addOption($item[1]);
+        }
+
+        unset($this->optionsRemovedByMove[$moveCount]);
+        unset($this->cellsSolvedByMove[$moveCount]);
+        unset($this->moves[$moveCount - 1]);
     }
 
     public function __toString()
@@ -195,5 +194,10 @@ class Puzzle {
         }
         $html .= '</table><br />';
         return $html;
+    }
+
+    public function getTime()
+    {
+        return $this->time;
     }
 }

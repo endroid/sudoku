@@ -31,15 +31,20 @@ class Cell
 
     public function setValue($value, $updateAdjacentCells = false)
     {
-        if ($this->value != null) {
-            throw new \Exception('Value was already set');
-        }
-        $this->value = $value;
-        $this->sudoku->incrementCellsSolved();
-        $this->options = array($value => $value);
-        $this->shouldUpdateAdjacentCells = true;
-        if ($updateAdjacentCells) {
-            $this->updateAdjacentCells();
+        if ($value === null) {
+            $this->value = $value;
+            $this->shouldUpdateAdjacentCells = false;
+        } else {
+            if ($this->value != null) {
+                throw new \Exception('Value was already set');
+            }
+            $this->value = $value;
+            $this->sudoku->setCellSolved($this);
+            $this->options = array($value => $value);
+            $this->shouldUpdateAdjacentCells = true;
+            if ($updateAdjacentCells) {
+                $this->updateAdjacentCells();
+            }
         }
 	}
 
@@ -74,12 +79,18 @@ class Cell
     protected function removeOption($option)
     {
         unset($this->options[$option]);
+        $this->sudoku->setOptionRemoved($this, $option);
         if (count($this->options) == 0) {
             throw new \Exception('Invalid Sudoku, no more options left');
         }
         $this->checkUnique();
         $this->checkSolved();
         $this->checkValidAdjacent();
+    }
+
+    public function addOption($option)
+    {
+        $this->options[$option] = $option;
     }
 
     protected function checkUnique()
@@ -140,4 +151,3 @@ class Cell
     }
 
 }
-?>
