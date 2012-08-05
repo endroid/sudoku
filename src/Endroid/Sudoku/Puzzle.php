@@ -4,6 +4,7 @@ namespace Endroid\Sudoku;
 
 class Puzzle {
 
+    protected $time;
     protected $cells;
     protected $cellsSolved = 0;
 
@@ -199,5 +200,10 @@ class Puzzle {
     public function getTime()
     {
         return $this->time;
+    }
+
+    public function getValue($rowIndex, $colIndex)
+    {
+        return $this->cells[$rowIndex][$colIndex]->getValue();
     }
 }
