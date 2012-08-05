@@ -197,6 +197,11 @@ class Puzzle {
         return $html;
     }
 
+    public function isSolved()
+    {
+        return ($this->cellsSolved == 81);
+    }
+
     public function getTime()
     {
         return $this->time;
