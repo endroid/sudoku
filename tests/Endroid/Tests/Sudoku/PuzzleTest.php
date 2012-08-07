@@ -8,6 +8,9 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
 {
     public function testSolveEasy()
     {
+        // Add speed constraint
+        set_time_limit(60);
+
         // An easy puzzle
         $values = '
             003020600
@@ -30,6 +33,9 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
 
     public function testSolveHard()
     {
+        // Add speed constraint
+        set_time_limit(60);
+
         // A difficult puzzle
         $values = '
             800000000
