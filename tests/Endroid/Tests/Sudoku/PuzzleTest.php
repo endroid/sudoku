@@ -31,7 +31,8 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($sudoku->isSolved());
     }
 
-    public function testSolveHard()
+    // Puzzle: hardest
+    public function testSolveHard1()
     {
         // Add speed constraint
         set_time_limit(60);
@@ -47,6 +48,84 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
             001000068
             008500010
             090000400';
+
+        // Create the object
+        $sudoku = new Puzzle($values);
+        $sudoku = $sudoku->solve();
+
+        // Check if the puzzle is solved
+        $this->assertTrue($sudoku->isSolved());
+    }
+
+    // Puzzle: platinum blonde
+    public function testSolveHard2()
+    {
+        // Add speed constraint
+        set_time_limit(60);
+
+        // A difficult puzzle
+        $values = '
+            000000012
+            000000003
+            002300400
+            001800005
+            060070800
+            000009000
+            008500000
+            900040500
+            470006000';
+
+        // Create the object
+        $sudoku = new Puzzle($values);
+        $sudoku = $sudoku->solve();
+
+        // Check if the puzzle is solved
+        $this->assertTrue($sudoku->isSolved());
+    }
+
+    // Puzzle: golden nugget
+    public function testSolveHard3()
+    {
+        // Add speed constraint
+        set_time_limit(60);
+
+        // A difficult puzzle
+        $values = '
+            000000039
+            000001005
+            003050800
+            008090006
+            070002000
+            100400000
+            009080050
+            020000600
+            400700000';
+
+        // Create the object
+        $sudoku = new Puzzle($values);
+        $sudoku = $sudoku->solve();
+
+        // Check if the puzzle is solved
+        $this->assertTrue($sudoku->isSolved());
+    }
+
+    // Puzzle: red dwarf
+    public function testSolveHard4()
+    {
+        // Add speed constraint
+        set_time_limit(60);
+
+        // A difficult puzzle
+        $values = '
+            120300004
+            350000100
+            004000000
+            005400200
+            600070000
+            000008090
+            003100500
+            000009070
+            000060008';
 
         // Create the object
         $sudoku = new Puzzle($values);

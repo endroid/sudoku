@@ -69,7 +69,6 @@ class Puzzle {
 				}
 			}
 		}
-
 	}
 
     protected function toArray($values)
