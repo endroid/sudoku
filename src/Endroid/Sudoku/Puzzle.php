@@ -124,7 +124,7 @@ class Puzzle
         }
     }
 
-    protected function isSolved()
+    public function isSolved()
     {
         foreach ($this->rows as $row) {
             foreach ($this->columns as $column) {
