@@ -11,7 +11,7 @@ class PuzzleTest extends \PHPUnit_Framework_TestCase
         // Add speed constraint
         set_time_limit(60);
 
-        // An easy puzzle
+        // An easy puzzle: involves no guessing
         $values = '
             003020600
             900305001

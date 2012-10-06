@@ -2,74 +2,179 @@
 
 namespace Endroid\Sudoku;
 
-class Puzzle {
+class Puzzle
+{
+    public $debug = false;
 
-    protected $time;
-    protected $cells;
-    protected $cellsSolved = 0;
+    public $cells = array();
 
-    protected $moves = array();
-    protected $optionsRemovedByMove = array();
-    protected $cellsSolvedByMove = array();
+    public $rows = array();
+    public $columns = array();
+    public $blocks = array();
+    public $sections = array();
 
-    public function __construct($values = null) {
+    public $assignments = array();
+    public $optionsRemoved = array();
 
-		// First create all cells
-		for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-	        $this->cells[$rowIndex] = array();
-			for ($colIndex = 0; $colIndex < 9; $colIndex++) {
-				$this->cells[$rowIndex][$colIndex] = new Cell($rowIndex, $colIndex, $this);
-	        }
-	    }
+    public $moveIndex = -1;
+    public $moves = array();
+    public $storedMoves = array();
 
-	    // Set the adjacent cells
-	    for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-			for ($colIndex = 0; $colIndex < 9; $colIndex++) {
+    public function __construct($values = array())
+    {
+        // Create rows, columns and blocks
+        for ($index = 0; $index < 9; $index++) {
+            $this->sections[] = $this->rows[$index] = new Row($index, $this);
+            $this->sections[] = $this->columns[$index] = new Column($index, $this);
+            $this->sections[] = $this->blocks[$index] = new Block($index, $this);
+        }
 
-				// Row cells
-				for ($adjacentColIndex = 0; $adjacentColIndex < 9; $adjacentColIndex++) {
-					if ($adjacentColIndex != $colIndex) {
-						$this->cells[$rowIndex][$colIndex]->addAdjacentCell($this->cells[$rowIndex][$adjacentColIndex]);
-					}
-				}
+        // Create cells
+        foreach ($this->rows as $row) {
+            $this->cells[$row->index] = array();
+            foreach ($this->columns as $column) {
+                $this->cells[$row->index][$column->index] = new Cell($row, $column, $this->blocks[intval(floor($row->index / 3) * 3 + floor($column->index / 3))], $this);
+            }
+        }
 
-				// Column cells
-				for ($adjacentRowIndex = 0; $adjacentRowIndex < 9; $adjacentRowIndex++) {
-					if ($adjacentRowIndex != $rowIndex) {
-						$this->cells[$rowIndex][$colIndex]->addAdjacentCell($this->cells[$adjacentRowIndex][$colIndex]);
-					}
-				}
+        // Set adjacent cells
+        foreach ($this->rows as $row) {
+            foreach ($this->columns as $column) {
+                $this->cells[$row->index][$column->index]->setAdjacentCells();
+            }
+        }
 
-				// Block cells
-                $rowIndexStart = floor($rowIndex / 3) * 3;
-				$colIndexStart = floor($colIndex / 3) * 3;
-				for ($adjacentRowIndex = $rowIndexStart; $adjacentRowIndex < $rowIndexStart + 3; $adjacentRowIndex++) {
-					for ($adjacentColIndex = $colIndexStart; $adjacentColIndex < $colIndexStart + 3; $adjacentColIndex++) {
-						if ($adjacentRowIndex != $rowIndex && $adjacentColIndex != $colIndex) {
-							$this->cells[$rowIndex][$colIndex]->addAdjacentCell($this->cells[$adjacentRowIndex][$adjacentColIndex]);
-						}
-					}
-				}
+        // Set values if given
+        $this->setValues($values);
+    }
 
-			}
-	    }
-
-        // If the input is a string, convert it to an array
+    public function setValues($values)
+    {
+        // Allow string input
         if (is_string($values)) {
             $values = $this->toArray($values);
         }
 
-	    // Set the initial values
-	    if ($values !== null) {
-			for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-				for ($colIndex = 0; $colIndex < 9; $colIndex++) {
-					if (intval($values[$rowIndex][$colIndex]) > 0) {
-						$this->cells[$rowIndex][$colIndex]->setValue($values[$rowIndex][$colIndex]);
-					}
-				}
-			}
-		}
-	}
+        // Set values
+        foreach ($this->rows as $row) {
+            foreach ($this->columns as $column) {
+                if (intval($values[$row->index][$column->index]) > 0) {
+                    $this->addAssignment($this->cells[$row->index][$column->index], $values[$row->index][$column->index]);
+                }
+            }
+        }
+    }
+
+    public function addAssignment($cell, $value)
+    {
+        $this->debug('Cell '.$cell->key.' will be assigned value '.$value);
+
+        $this->storeMove();
+
+        $this->assignments[] = array($cell, $value);
+    }
+
+    public function addOptionRemoved($cell, $option)
+    {
+        $this->storeMove();
+
+        $this->optionsRemoved[] = array($cell, $option);
+    }
+
+    public function solve($depth = 0)
+    {
+        while ($assignment = array_shift($this->assignments)) {
+
+            if ($assignment[0]->value == $assignment[1]) {
+                continue;
+            }
+
+            // Set value: this also removes options
+            $assignment[0]->setValue($assignment[1]);
+
+            // Propagate options removed
+            while ($optionRemoved = array_shift($this->optionsRemoved)) {
+                $optionRemoved[0]->propagateOptionRemoved($optionRemoved[1]);
+            }
+        }
+
+        // No more logical assignments left: start guessing
+        foreach ($this->rows as $row) {
+            foreach ($this->columns as $column) {
+                if ($this->cells[$row->index][$column->index]->value !== null) {
+                    continue;
+                }
+                foreach ($this->cells[$row->index][$column->index]->options as $option) {
+                    $move = array($row->index, $column->index, $option);
+                    try {
+                        $this->doMove($move);
+                        $this->solve($depth + 1);
+                        return true;
+                    } catch (\Exception $exception) {
+                        $this->debug('Exception occurred: '.$exception->getMessage().$this);
+                        $this->undoMove();
+                    }
+                }
+                throw new \Exception('All options tried');
+            }
+        }
+
+        if (!$this->isSolved()) {
+            throw new \Exception('No more moves left');
+        }
+    }
+
+    protected function isSolved()
+    {
+        foreach ($this->rows as $row) {
+            foreach ($this->columns as $column) {
+                if ($this->cells[$row->index][$column->index]->value === null) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    protected function doMove($move)
+    {
+        $this->debug($this.'MOVE: '.$move[0].$move[1].' - '.$move[2]);
+        $this->moveIndex = count($this->moves);
+        $this->moves[$this->moveIndex] = $move;
+        $this->addAssignment($this->cells[$move[0]][$move[1]], $move[2]);
+    }
+
+    public function storeMove()
+    {
+        if ($this->moveIndex > -1 && !isset($this->storedMoves[$this->moveIndex])) {
+            $this->storedMoves[$this->moveIndex] = array($this->assignments, $this->optionsRemoved);
+        }
+    }
+
+    protected function undoMove()
+    {
+        if ($this->moveIndex > -1 && isset($this->storedMoves[$this->moveIndex])) {
+            $this->assignments = $this->storedMoves[$this->moveIndex][0];
+            $this->optionsRemoved = $this->storedMoves[$this->moveIndex][1];
+            unset($this->storedMoves[$this->moveIndex]);
+        }
+
+        foreach ($this->rows as $row) {
+            foreach ($this->columns as $column) {
+                $this->cells[$row->index][$column->index]->undoMove();
+            }
+        }
+
+        foreach ($this->sections as $section) {
+            $section->undoMove();
+        }
+
+        unset($this->moves[$this->moveIndex]);
+        $this->moveIndex--;
+
+        $this->debug('AFTER UNDO MOVE '.$this);
+    }
 
     protected function toArray($values)
     {
@@ -87,127 +192,26 @@ class Puzzle {
         return $values;
     }
 
-    public function setCellSolved($cell)
-    {
-        $this->cellsSolvedByMove[count($this->moves)][] = array($cell, $cell->getOptions());
-        $this->cellsSolved++;
-    }
-
-    public function setOptionRemoved($cell, $option)
-    {
-        $this->optionsRemovedByMove[count($this->moves)][] = array($cell, $option);
-    }
-
-    public function solve($depth = 0)
-    {
-        if ($depth == 0) {
-            $time = microtime(true);
-        }
-
-        $progress = true;
-        while ($progress) {
-            $progress = false;
-            for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-                for ($colIndex = 0; $colIndex < 9; $colIndex++) {
-                    if ($this->cells[$rowIndex][$colIndex]->getShouldUpdateAdjacentCells()) {
-                        $this->cells[$rowIndex][$colIndex]->updateAdjacentCells();
-                        $progress = true;
-                    }
-                }
-            }
-        }
-
-        $movesByCount = array();
-
-        // Calculate all possible moves
-        for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-            for ($colIndex = 0; $colIndex < 9; $colIndex++) {
-                $optionCount = count($this->cells[$rowIndex][$colIndex]->getOptions());
-                foreach ($this->cells[$rowIndex][$colIndex]->getOptions() as $option) {
-                    if ($this->cells[$rowIndex][$colIndex]->getValue() === null) {
-                        $movesByCount[$optionCount][] = array($rowIndex, $colIndex, $option);
-                    }
-                }
-            }
-        }
-
-        ksort($movesByCount);
-
-        foreach ($movesByCount as &$item) {
-            shuffle($item);
-        }
-
-        foreach ($movesByCount as $moves) {
-            foreach ($moves as $move) {
-                $this->moves[count($this->moves)] = $move;
-                $moveCount = count($this->moves);
-                $this->optionsRemovedByMove[$moveCount] = array();
-                $this->cellsSolvedByMove[$moveCount] = array();
-                $this->cells[$move[0]][$move[1]]->setValue($move[2]);
-                try {
-                    return $this->solve($depth + 1);
-                } catch (\Exception $exception) {
-                    $this->undo();
-                }
-            }
-        }
-
-        if ($depth != 0) {
-            throw new \Exception('No valid options left');
-        } else {
-            $this->time = round(microtime(true) - $time, 3);
-        }
-
-        return $this;
-    }
-
-    protected function undo()
-    {
-        $moveCount = count($this->moves);
-
-        foreach ($this->cellsSolvedByMove[$moveCount] as $item) {
-            $item[0]->setValue(null);
-            $item[0]->setOptions($item[1]);
-            $this->cellsSolved--;
-        }
-
-        foreach ($this->optionsRemovedByMove[$moveCount] as $item) {
-            $item[0]->addOption($item[1]);
-        }
-
-        unset($this->optionsRemovedByMove[$moveCount]);
-        unset($this->cellsSolvedByMove[$moveCount]);
-        unset($this->moves[$moveCount - 1]);
-    }
-
     public function __toString()
     {
         $html = '<table>';
-        for ($row = 0; $row < 9; $row++) {
+        foreach ($this->rows as $row) {
             $html .= '<tr>';
-            for ($col = 0; $col < 9; $col++) {
+            foreach ($this->columns as $column) {
                 $html .= '<td style="text-align: center; vertical-align: middle; width: 50px; height: 60px; border: 2px solid #000;">';
-                $html .= $this->cells[$row][$col];
+                $html .= $this->cells[$row->index][$column->index];
                 $html .= '</td>';
             }
             $html .= '</tr>';
         }
-        $html .= '</table><br />';
+        $html .= '</table>';
+
         return $html;
     }
 
-    public function isSolved()
-    {
-        return ($this->cellsSolved == 81);
-    }
-
-    public function getTime()
-    {
-        return $this->time;
-    }
-
-    public function getValue($rowIndex, $colIndex)
-    {
-        return $this->cells[$rowIndex][$colIndex]->getValue();
+    public function debug($message) {
+        if ($this->debug) {
+            echo $message.'<br />';
+        }
     }
 }

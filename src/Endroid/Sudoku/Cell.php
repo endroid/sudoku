@@ -4,138 +4,114 @@ namespace Endroid\Sudoku;
 
 class Cell
 {
-    protected $rowIndex;
-    protected $colIndex;
-    protected $sudoku;
-    protected $value = null;
-    protected $shouldUpdateAdjacentCells = false;
-    protected $options = array(1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9);
-    protected $adjacentCells = array();
+    public $key;
+    public $value = null;
+    public $options = array(1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9);
 
-    public function __construct($rowIndex, $colIndex, $sudoku)
-    {
-        $this->rowIndex = $rowIndex;
-		$this->colIndex = $colIndex;
-        $this->sudoku = $sudoku;
-	}
+    public $adjacentCells = array();
 
-    public function addAdjacentCell(Cell $cell)
-    {
-		$this->adjacentCells[] = $cell;
-	}
+    public $row;
+    public $column;
+    public $block;
+    public $sections = array();
 
-    public function getValue()
+    public $puzzle;
+
+    public $moves = array();
+
+    public function __construct(Row $row, Column $column, Block $block, Puzzle $puzzle)
     {
-        return $this->value;
+        $this->key = $row->index.$column->index;
+
+        $this->sections[] = $this->row = $row;
+        $this->sections[] = $this->column = $column;
+        $this->sections[] = $this->block = $block;
+
+        $this->row->addCell($this);
+        $this->column->addCell($this);
+        $this->block->addCell($this);
+
+        $this->puzzle = $puzzle;
     }
 
-    public function setValue($value, $updateAdjacentCells = false)
+    public function setAdjacentCells()
     {
-        if ($value === null) {
-            $this->value = $value;
-            $this->shouldUpdateAdjacentCells = false;
-        } else {
-            if ($this->value != null) {
-                throw new \Exception('Value was already set');
-            }
-            $this->value = $value;
-            $this->sudoku->setCellSolved($this);
-            $this->options = array($value => $value);
-            $this->shouldUpdateAdjacentCells = true;
-            if ($updateAdjacentCells) {
-                $this->updateAdjacentCells();
+        foreach ($this->sections as $section) {
+            foreach ($section->cells as $cell) {
+                if ($cell != $this && !in_array($cell->key, $this->adjacentCells)) {
+                    $this->adjacentCells[$cell->key] = $cell;
+                }
             }
         }
-	}
-
-    public function setShouldUpdateAdjacentCells($shouldUpdateAdjacentCells)
-    {
-        $this->shouldUpdateAdjacentCells = $shouldUpdateAdjacentCells;
     }
 
-    public function getShouldUpdateAdjacentCells()
+    public function setValue($value)
     {
-        return $this->shouldUpdateAdjacentCells;
-    }
+        $this->debug('setting value to '.$value);
 
-    public function updateAdjacentCells()
-    {
+        $this->storeMove();
+
+        $this->value = $value;
+
+        foreach ($this->options as $option) {
+            $this->removeOption($option);
+        }
+
+        foreach ($this->sections as $section) {
+            $section->valueSet($value);
+        }
+
         foreach ($this->adjacentCells as $cell) {
-            $cell->removeOption($this->value);
+            $cell->removeOption($value);
         }
-        $this->shouldUpdateAdjacentCells = false;
+
+        $this->debug($this->puzzle);
     }
 
-    public function setOptions($options)
+    public function removeOption($option)
     {
-        $this->options = $options;
-    }
+        if (!isset($this->options[$option])) {
+            return;
+        }
 
-    public function getOptions()
-    {
-        return $this->options;
-    }
+        $this->storeMove();
 
-    protected function removeOption($option)
-    {
         unset($this->options[$option]);
-        $this->sudoku->setOptionRemoved($this, $option);
-        if (count($this->options) == 0) {
-            throw new \Exception('Invalid Sudoku, no more options left');
+
+        if ($this->value === null && count($this->options) == 0) {
+            throw new \Exception('Cell '.$this->key.' has no options left');
         }
-        $this->checkUnique();
-        $this->checkSolved();
-        $this->checkValidAdjacent();
+
+        $this->puzzle->addOptionRemoved($this, $option);
     }
 
-    public function addOption($option)
+    public function propagateOptionRemoved($option)
     {
-        $this->options[$option] = $option;
-    }
+        if (count($this->options) == 1) {
+            $this->puzzle->addAssignment($this, end($this->options));
+        }
 
-    protected function checkUnique()
-    {
-        if ($this->value === null) {
-            foreach ($this->options as $option) {
-                $rowUnique = true;
-                $colUnique = true;
-                $blockUnique = true;
-                foreach ($this->adjacentCells as $cell) {
-                    if (in_array($option, $cell->options)) {
-                        if ($cell->rowIndex == $this->rowIndex) {
-                            $rowUnique = false;
-                        }
-                        if ($cell->colIndex == $this->colIndex) {
-                            $colUnique = false;
-                        }
-                        $rowIndexStart = floor($this->rowIndex / 3) * 3;
-                        $colIndexStart = floor($this->colIndex / 3) * 3;
-                        if ($cell->rowIndex >= $rowIndexStart && $cell->rowIndex < $rowIndexStart + 3 && $cell->colIndex >= $colIndexStart && $cell->colIndex < $colIndexStart + 3) {
-                            $blockUnique = false;
-                        }
-                    }
-                }
-                if ($rowUnique || $colUnique || $blockUnique) {
-                    $this->setValue($option);
-                    break;
-                }
-            }
+        foreach ($this->sections as $section) {
+            $section->checkUnique($option);
+            $section->checkAvailableOptions();
         }
     }
 
-    protected function checkSolved()
+    public function storeMove()
     {
-        if ($this->value === null && count($this->options) == 1) {
-            $this->setValue(end($this->options));
+        $moveIndex = $this->puzzle->moveIndex;
+        if ($moveIndex > -1 && !isset($this->moves[$moveIndex])) {
+            $this->moves[$moveIndex] = array($this->options, $this->value);
         }
     }
 
-    protected function checkValidAdjacent()
+    public function undoMove()
     {
-        foreach ($this->adjacentCells as $cell) {
-            if ($cell->value !== null && $cell->value == $this->value) {
-                throw new \Exception('Invalid Sudoku, value already taken');
-            }
+        $moveIndex = $this->puzzle->moveIndex;
+        if ($moveIndex > -1 && isset($this->moves[$moveIndex])) {
+            $this->options = $this->moves[$moveIndex][0];
+            $this->value = $this->moves[$moveIndex][1];
+            unset($this->moves[$moveIndex]);
         }
     }
 
@@ -143,11 +119,16 @@ class Cell
     {
         $html = '';
         if ($this->value !== null) {
-            $html .= '<div class="solved">'.$this->value.'</div>';
+            $html .= '<div class="solved" style="background-color:#CCC;">'.$this->value.'</div>';
         } else {
             $html .= '<div class="options">'.implode(' ', $this->options).'</div>';
         }
+
         return $html;
     }
 
+    public function debug($message)
+    {
+        $this->puzzle->debug('Cell '.$this->key.' '.$message);
+    }
 }
