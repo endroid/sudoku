@@ -1,6 +1,8 @@
 Endroid Sudoku Solver
 =====================
 
+*By [endroid](http://endroid.nl/)*
+
 [![Build Status](https://secure.travis-ci.org/endroid/Sudoku.png)](http://travis-ci.org/endroid/Sudoku)
 
 The library that solves Sudoku puzzles in a jiffy.
@@ -30,3 +32,8 @@ $sudoku = new Puzzle($puzzle);
 
 // Solve the puzzle
 echo $sudoku->solve();
+
+## License
+
+This bundle is under the MIT license. For the full copyright and license information, please view the LICENSE file that
+was distributed with this source code.
