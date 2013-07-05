@@ -32,6 +32,7 @@ $sudoku = new Puzzle($puzzle);
 
 // Solve the puzzle
 echo $sudoku->solve();
+```
 
 ## License
 
