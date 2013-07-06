@@ -4,6 +4,8 @@ Endroid Sudoku Solver
 *By [endroid](http://endroid.nl/)*
 
 [![Build Status](https://secure.travis-ci.org/endroid/Sudoku.png)](http://travis-ci.org/endroid/Sudoku)
+[![Latest Stable Version](https://poser.pugx.org/endroid/sudoku/v/stable.png)](https://packagist.org/packages/endroid/sudoku)
+[![Total Downloads](https://poser.pugx.org/endroid/sudoku/downloads.png)](https://packagist.org/packages/endroid/sudoku)
 
 The library that solves Sudoku puzzles in a jiffy.
 
