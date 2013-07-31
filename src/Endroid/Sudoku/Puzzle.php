@@ -72,7 +72,7 @@ class Puzzle
         }
     }
 
-    public function addAssignment($cell, $value)
+    public function addAssignment(Cell $cell, $value)
     {
         $this->debug('Cell '.$cell->key.' will be assigned value '.$value);
 
