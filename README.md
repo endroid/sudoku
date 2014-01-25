@@ -17,17 +17,17 @@ Example usage
 
 use Endroid\Sudoku\Puzzle;
 
-// An easy puzzle
+// An difficult puzzle (Platinum Blonde)
 $puzzle = '
-    003020600
-    900305001
-    001806400
-    008102900
-    700000008
-    006708200
-    002609500
-    800203009
-    005010300';
+    000000012
+    000000003
+    002300400
+    001800005
+    060070800
+    000009000
+    008500000
+    900040500
+    470006000';
 
 // Create the puzzle
 $sudoku = new Puzzle($puzzle);
