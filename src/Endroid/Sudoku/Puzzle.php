@@ -59,7 +59,7 @@ class Puzzle
     {
         // Allow string input
         if (is_string($values)) {
-            $values = $this->toArray($values);
+            $values = self::toArray($values);
         }
 
         // Set values
@@ -183,7 +183,7 @@ class Puzzle
         $this->debug('AFTER UNDO MOVE '.$this);
     }
 
-    protected function toArray($values)
+    public static function toArray($values)
     {
         // Filter all but digits
         $values = preg_replace('#[^0-9]*#i', '', $values);
