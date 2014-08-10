@@ -124,14 +124,7 @@ class Cell
 
     public function __toString()
     {
-        $html = '';
-        if ($this->value !== null) {
-            $html .= '<div class="solved" style="background-color:#CCC;">'.$this->value.'</div>';
-        } else {
-            $html .= '<div class="options">'.implode(' ', $this->options).'</div>';
-        }
-
-        return $html;
+        return strval($this->value);
     }
 
     public function debug($message)

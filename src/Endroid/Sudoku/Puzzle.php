@@ -201,19 +201,14 @@ class Puzzle
 
     public function __toString()
     {
-        $html = '<table>';
+        $string = '';
         foreach ($this->rows as $row) {
-            $html .= '<tr>';
             foreach ($this->columns as $column) {
-                $html .= '<td style="text-align: center; vertical-align: middle; width: 50px; height: 60px; border: 2px solid #000;">';
-                $html .= $this->cells[$row->index][$column->index];
-                $html .= '</td>';
+                $string .= $this->cells[$row->index][$column->index];
             }
-            $html .= '</tr>';
         }
-        $html .= '</table>';
 
-        return $html;
+        return $string;
     }
 
     public function debug($message) {
