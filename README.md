@@ -36,6 +36,10 @@ $sudoku = new Puzzle($puzzle);
 echo $sudoku->solve();
 ```
 
+## Versioning
+
+Semantic versioning ([semver](http://semver.org/)) is applied.
+
 ## License
 
 This bundle is under the MIT license. For the full copyright and license information, please view the LICENSE file that
