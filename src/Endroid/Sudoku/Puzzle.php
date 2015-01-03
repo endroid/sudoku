@@ -91,7 +91,6 @@ class Puzzle
     public function solve($depth = 0)
     {
         while ($assignment = array_shift($this->assignments)) {
-
             if ($assignment[0]->value == $assignment[1]) {
                 continue;
             }
@@ -116,6 +115,7 @@ class Puzzle
                     try {
                         $this->doMove($move);
                         $this->solve($depth + 1);
+
                         return true;
                     } catch (\Exception $exception) {
                         $this->debug('Exception occurred: '.$exception->getMessage().$this);
@@ -211,7 +211,8 @@ class Puzzle
         return $string;
     }
 
-    public function debug($message) {
+    public function debug($message)
+    {
         if ($this->debug) {
             echo $message.'<br />';
         }
