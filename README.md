@@ -9,8 +9,15 @@ Endroid Sudoku Solver
 
 The library that solves Sudoku puzzles in a jiffy.
 
-Example usage
--------------
+## Installation
+
+Use [Composer](https://getcomposer.org/) to install the library.
+
+``` bash
+$ composer require endroid/sudoku
+```
+
+## Usage
 
 ``` php
 <?php
