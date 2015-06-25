@@ -9,7 +9,9 @@
 
 namespace Endroid\Tests\Sudoku;
 
-class CellTest extends \PHPUnit_Framework_TestCase
+use PHPUnit_Framework_TestCase;
+
+class CellTest extends PHPUnit_Framework_TestCase
 {
     public function testNoTestsYet()
     {

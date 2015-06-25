@@ -1,5 +1,5 @@
-Endroid Sudoku Solver
-=====================
+Sudoku
+======
 
 *By [endroid](http://endroid.nl/)*
 

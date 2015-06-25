@@ -30,7 +30,7 @@ class Puzzle
     public function __construct($values = array())
     {
         // Create rows, columns and blocks
-        for ($index = 0; $index < 9; $index++) {
+        for ($index = 0; $index < 9; ++$index) {
             $this->sections[] = $this->rows[$index] = new Row($index, $this);
             $this->sections[] = $this->columns[$index] = new Column($index, $this);
             $this->sections[] = $this->blocks[$index] = new Block($index, $this);
@@ -178,7 +178,7 @@ class Puzzle
         }
 
         unset($this->moves[$this->moveIndex]);
-        $this->moveIndex--;
+        --$this->moveIndex;
 
         $this->debug('AFTER UNDO MOVE '.$this);
     }

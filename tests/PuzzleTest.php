@@ -10,8 +10,9 @@
 namespace Endroid\Tests\Sudoku;
 
 use Endroid\Sudoku\Puzzle;
+use PHPUnit_Framework_TestCase;
 
-class PuzzleTest extends \PHPUnit_Framework_TestCase
+class PuzzleTest extends PHPUnit_Framework_TestCase
 {
     public function testSolveWithoutGuessing()
     {
