@@ -13,18 +13,18 @@ class Cell
 {
     public $key;
     public $value = null;
-    public $options = array(1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9);
+    public $options = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9];
 
-    public $adjacentCells = array();
+    public $adjacentCells = [];
 
     public $row;
     public $column;
     public $block;
-    public $sections = array();
+    public $sections = [];
 
     public $puzzle;
 
-    public $moves = array();
+    public $moves = [];
 
     public function __construct(Row $row, Column $column, Block $block, Puzzle $puzzle)
     {
@@ -108,7 +108,7 @@ class Cell
     {
         $moveIndex = $this->puzzle->moveIndex;
         if ($moveIndex > -1 && !isset($this->moves[$moveIndex])) {
-            $this->moves[$moveIndex] = array($this->options, $this->value);
+            $this->moves[$moveIndex] = [$this->options, $this->value];
         }
     }
 

@@ -13,21 +13,21 @@ class Puzzle
 {
     public $debug = false;
 
-    public $cells = array();
+    public $cells = [];
 
-    public $rows = array();
-    public $columns = array();
-    public $blocks = array();
-    public $sections = array();
+    public $rows = [];
+    public $columns = [];
+    public $blocks = [];
+    public $sections = [];
 
-    public $assignments = array();
-    public $optionsRemoved = array();
+    public $assignments = [];
+    public $optionsRemoved = [];
 
     public $moveIndex = -1;
-    public $moves = array();
-    public $storedMoves = array();
+    public $moves = [];
+    public $storedMoves = [];
 
-    public function __construct($values = array())
+    public function __construct($values = [])
     {
         // Create rows, columns and blocks
         for ($index = 0; $index < 9; ++$index) {
@@ -38,7 +38,7 @@ class Puzzle
 
         // Create cells
         foreach ($this->rows as $row) {
-            $this->cells[$row->index] = array();
+            $this->cells[$row->index] = [];
             foreach ($this->columns as $column) {
                 $this->cells[$row->index][$column->index] = new Cell($row, $column, $this->blocks[intval(floor($row->index / 3) * 3 + floor($column->index / 3))], $this);
             }
@@ -78,14 +78,14 @@ class Puzzle
 
         $this->storeMove();
 
-        $this->assignments[] = array($cell, $value);
+        $this->assignments[] = [$cell, $value];
     }
 
     public function addOptionRemoved($cell, $option)
     {
         $this->storeMove();
 
-        $this->optionsRemoved[] = array($cell, $option);
+        $this->optionsRemoved[] = [$cell, $option];
     }
 
     public function solve($depth = 0)
@@ -111,7 +111,7 @@ class Puzzle
                     continue;
                 }
                 foreach ($this->cells[$row->index][$column->index]->options as $option) {
-                    $move = array($row->index, $column->index, $option);
+                    $move = [$row->index, $column->index, $option];
                     try {
                         $this->doMove($move);
                         $this->solve($depth + 1);
@@ -155,7 +155,7 @@ class Puzzle
     public function storeMove()
     {
         if ($this->moveIndex > -1 && !isset($this->storedMoves[$this->moveIndex])) {
-            $this->storedMoves[$this->moveIndex] = array($this->assignments, $this->optionsRemoved);
+            $this->storedMoves[$this->moveIndex] = [$this->assignments, $this->optionsRemoved];
         }
     }
 
