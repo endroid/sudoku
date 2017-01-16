@@ -1,0 +1,25 @@
+{% extends 'EndroidSudokuBundle::layout.html.twig' %}
+
+{% block page_title %}
+    Sudoku Solver
+{% endblock %}
+
+{% block page_content %}
+    <div id="application"></div>
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }}
+
+    <script>
+        let appConfig = {
+            loadPath: "{{ path('endroid_sudoku__sudoku_state') }}",
+            solvePath: "{{ path('endroid_sudoku__sudoku_solve') }}",
+        }
+    </script>
+
+    <script src="http://localhost:8080/builds/index.js"></script>
+    {#<script src="{{ asset('bundles/endroidsudoku/builds/index.js') }}"></script>#}
+
+{% endblock %}

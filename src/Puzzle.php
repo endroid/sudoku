@@ -13,6 +13,7 @@ class Puzzle
 {
     public $debug = false;
 
+    /** @var Cell[] */
     public $cells = [];
 
     public $rows = [];
@@ -88,7 +89,7 @@ class Puzzle
         $this->optionsRemoved[] = [$cell, $option];
     }
 
-    public function solve($depth = 0)
+    public function solve($deep = true, $depth = 0)
     {
         while ($assignment = array_shift($this->assignments)) {
             if ($assignment[0]->value == $assignment[1]) {
@@ -102,6 +103,10 @@ class Puzzle
             while ($optionRemoved = array_shift($this->optionsRemoved)) {
                 $optionRemoved[0]->propagateOptionRemoved($optionRemoved[1]);
             }
+        }
+
+        if (!$deep) {
+            return false;
         }
 
         // No more logical assignments left: start guessing
