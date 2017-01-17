@@ -2,7 +2,7 @@ import React from 'react';
 import Request from 'superagent';
 import Alert from 'react-s-alert';
 import 'react-s-alert/dist/s-alert-default.css';
-import _ from 'lodash';
+import Sudoku from './Sudoku';
 
 class Application extends React.Component {
 
@@ -17,14 +17,34 @@ class Application extends React.Component {
     }
 
     loadState() {
-        Request.get(this.props.loadPath).then((response) => {
-            console.log(response.body);
+        let loadPath = this.props.loadPath;
+        if (this.state) {
+            loadPath += '?values=' + this.state.sudoku.string;
+        }
+        Request.get(loadPath).then((response) => {
             this.setState(response.body);
         });
     }
 
     onChange(event) {
-        console.log(event.target.value);
+        this.state.sudoku.cells[event.target.name].value = event.target.value;
+        this.updateStringRepresentation();
+        this.setState(this.state);
+        this.loadState();
+    }
+
+    updateStringRepresentation() {
+        let representation = "";
+        for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
+            for (let colIndex = 0; colIndex < 9; colIndex++) {
+                let value = this.state.sudoku.cells[rowIndex + "" + colIndex].value;
+                if (value == '') {
+                    value = 0;
+                }
+                representation += "" + value;
+            }
+        }
+        this.state.sudoku.string = representation;
     }
 
     render() {
@@ -33,50 +53,14 @@ class Application extends React.Component {
             return <div>No sudoku loaded</div>
         }
 
-        let sudoku = this;
-
-        let cells = [];
-        _.each(this.state.sudoku, function(cell, index) {
-            cells.push(
-                <div key={index}>
-                    <input type="text" value={cell.value} onChange={sudoku.onChange} />
-                </div>
-            )
-        });
+        let url = this.props.linkPath + "?values=" + this.state.sudoku.string;
 
         return (
-            <div className="row">
-                {cells}
+            <div>
+                <Sudoku cells={this.state.sudoku.cells} onChange={this.onChange} />
+                <a href={url}>Permalink</a>
             </div>
-        )
-
-
-
-        // let targetEntity = null;
-        // let sourceEntities = [];
-        // for (let entity of this.state.entities) {
-        //     if (this.state.sources.includes(entity.id)) {
-        //         sourceEntities.push(entity);
-        //     }
-        //     if (this.state.target == entity.id) {
-        //         targetEntity = entity;
-        //     }
-        // }
-        //
-        // return (
-        //     <div className="row">
-        //         <Alert stack={{limit: 3}} />
-        //         <div className="col-md-4">
-        //             <SourceEntitySelect entities={this.state.entities} fields={this.state.fields} onChange={this.onSourceEntityChange} />
-        //         </div>
-        //         <div className="col-md-4">
-        //             <TargetEntitySelect entities={sourceEntities} fields={this.state.fields} onChange={this.onTargetEntityChange} />
-        //         </div>
-        //         <div className="col-md-4">
-        //             <TargetEntity entity={targetEntity} fields={this.state.fields} onClick={this.onMergeClick} />
-        //         </div>
-        //     </div>
-        // );
+        );
     }
 }
 

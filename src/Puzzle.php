@@ -9,6 +9,8 @@
 
 namespace Endroid\Sudoku;
 
+use Exception;
+
 class Puzzle
 {
     public $debug = false;
@@ -27,6 +29,8 @@ class Puzzle
     public $moveIndex = -1;
     public $moves = [];
     public $storedMoves = [];
+
+    public $valid = true;
 
     public function __construct($values = [])
     {
@@ -60,7 +64,7 @@ class Puzzle
     {
         // Allow string input
         if (is_string($values)) {
-            $values = self::toArray($values);
+            $values = self::valuesToArray($values);
         }
 
         // Set values
@@ -91,48 +95,52 @@ class Puzzle
 
     public function solve($deep = true, $depth = 0)
     {
-        while ($assignment = array_shift($this->assignments)) {
-            if ($assignment[0]->value == $assignment[1]) {
-                continue;
-            }
-
-            // Set value: this also removes options
-            $assignment[0]->setValue($assignment[1]);
-
-            // Propagate options removed
-            while ($optionRemoved = array_shift($this->optionsRemoved)) {
-                $optionRemoved[0]->propagateOptionRemoved($optionRemoved[1]);
-            }
-        }
-
-        if (!$deep) {
-            return false;
-        }
-
-        // No more logical assignments left: start guessing
-        foreach ($this->rows as $row) {
-            foreach ($this->columns as $column) {
-                if ($this->cells[$row->index][$column->index]->value !== null) {
+        try {
+            while ($assignment = array_shift($this->assignments)) {
+                if ($assignment[0]->value == $assignment[1]) {
                     continue;
                 }
-                foreach ($this->cells[$row->index][$column->index]->options as $option) {
-                    $move = [$row->index, $column->index, $option];
-                    try {
-                        $this->doMove($move);
-                        $this->solve($depth + 1);
 
-                        return true;
-                    } catch (\Exception $exception) {
-                        $this->debug('Exception occurred: '.$exception->getMessage().$this);
-                        $this->undoMove();
-                    }
+                // Set value: this also removes options
+                $assignment[0]->setValue($assignment[1]);
+
+                // Propagate options removed
+                while ($optionRemoved = array_shift($this->optionsRemoved)) {
+                    $optionRemoved[0]->propagateOptionRemoved($optionRemoved[1]);
                 }
-                throw new \Exception('All options tried');
             }
-        }
 
-        if (!$this->isSolved()) {
-            throw new \Exception('No more moves left');
+            if (!$deep) {
+                return false;
+            }
+
+            // No more logical assignments left: start guessing
+            foreach ($this->rows as $row) {
+                foreach ($this->columns as $column) {
+                    if ($this->cells[$row->index][$column->index]->value !== null) {
+                        continue;
+                    }
+                    foreach ($this->cells[$row->index][$column->index]->options as $option) {
+                        $move = [$row->index, $column->index, $option];
+                        try {
+                            $this->doMove($move);
+                            $this->solve($depth + 1);
+
+                            return true;
+                        } catch (\Exception $exception) {
+                            $this->debug('Exception occurred: ' . $exception->getMessage() . $this);
+                            $this->undoMove();
+                        }
+                    }
+                    throw new \Exception('All options tried');
+                }
+            }
+
+            if (!$this->isSolved()) {
+                $this->valid = false;
+            }
+        } catch (Exception $exception) {
+            $this->valid = false;
         }
     }
 
@@ -188,7 +196,7 @@ class Puzzle
         $this->debug('AFTER UNDO MOVE '.$this);
     }
 
-    public static function toArray($values)
+    public static function valuesToArray($values)
     {
         // Filter all but digits
         $values = preg_replace('#[^0-9]*#i', '', $values);
@@ -214,6 +222,22 @@ class Puzzle
         }
 
         return $string;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        $data = ['cells' => [], 'string' => '', 'valid' => $this->valid];
+        foreach ($this->cells as $rowIndex => $row) {
+            foreach ($row as $colIndex => $cell) {
+                $data['cells'][$cell->key] = $cell->toArray();
+                $data['string'] .= $cell->value ?: '0';
+            }
+        }
+
+        return $data;
     }
 
     public function debug($message)

@@ -25,7 +25,7 @@ class SudokuController extends Controller
      * @param string $values
      * @return array
      */
-    public function sudokuAction($values)
+    public function indexAction($values)
     {
         // Disable web profiler when using React
         if ($this->has('profiler')) {
@@ -47,12 +47,17 @@ class SudokuController extends Controller
      */
     public function stateAction(Request $request)
     {
-        $values = $request->query->get('sudoku');
+        $values = $request->query->get('values');
 
         $sudoku = $this->createSudoku($values);
-        $sudoku->solve(false);
 
-        return new JsonResponse(['sudoku' => $this->serializeSudoku($sudoku)]);
+        try {
+            $sudoku->solve(false);
+        } catch (Exception $exception) {
+            // do nothing
+        }
+
+        return new JsonResponse(['sudoku' => $sudoku->toArray()]);
     }
 
     /**
@@ -67,7 +72,7 @@ class SudokuController extends Controller
         $sudoku = $this->createSudoku($values);
         $sudoku->solve(true);
 
-        return new JsonResponse(['sudoku' => $this->serializeSudoku($sudoku)]);
+        return new JsonResponse(['sudoku' => $sudoku->toArray()]);
     }
 
     /**
@@ -83,24 +88,5 @@ class SudokuController extends Controller
         $sudoku = new Puzzle($values);
 
         return $sudoku;
-    }
-
-    /**
-     * @param Puzzle $sudoku
-     * @return array
-     */
-    protected function serializeSudoku(Puzzle $sudoku)
-    {
-        $data = [];
-        foreach ($sudoku->cells as $rowIndex => $row) {
-            foreach ($row as $colIndex => $cell) {
-                $data[$cell->key] = [
-                    'value' => is_null($cell->value) ? '' : $cell->value,
-                    'options' => $cell->options,
-                ];
-            }
-        }
-
-        return $data;
     }
 }

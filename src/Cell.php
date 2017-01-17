@@ -127,6 +127,14 @@ class Cell
         return strval($this->value);
     }
 
+    public function toArray()
+    {
+        return [
+            'value' => is_null($this->value) ? '' : $this->value,
+            'options' => $this->options,
+        ];
+    }
+
     public function debug($message)
     {
         $this->puzzle->debug('Cell '.$this->key.' '.$message);
