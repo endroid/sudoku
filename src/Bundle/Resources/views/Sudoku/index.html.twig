@@ -5,7 +5,45 @@
 {% endblock %}
 
 {% block page_content %}
+    <style>
+        table {
+            border-collapse: collapse;
+            font-family: Calibri, sans-serif;
+        }
+        colgroup, tbody {
+            border: solid medium;
+        }
+        td {
+            border: solid thin;
+            height: 1.4em;
+            width: 1.4em;
+            text-align: center;
+            padding: 0;
+        }
+        input[type='number'] {
+            -moz-appearance:textfield;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+        input {
+            text-align: center;
+            width: 40px;
+            height: 40px;
+            font-weight: bold;
+        }
+        .invalid input {
+            color: red;
+        }
+        #application a {
+            display: block;
+            margin: 5px;
+        }
+    </style>
+
     <div id="application"></div>
+
 {% endblock %}
 
 {% block javascripts %}
@@ -14,13 +52,14 @@
 
     <script>
         let appConfig = {
+            values: "{{ app.request.query.get('values') }}",
             loadPath: "{{ path('endroid_sudoku__sudoku_state') }}",
             linkPath: "{{ path('endroid_sudoku__sudoku_index') }}",
             solvePath: "{{ path('endroid_sudoku__sudoku_solve') }}",
         }
     </script>
 
-    <script src="http://localhost:8080/builds/index.js"></script>
-    {#<script src="{{ asset('bundles/endroidsudoku/builds/index.js') }}"></script>#}
+    {#<script src="http://localhost:8080/builds/index.js"></script>#}
+    <script src="{{ asset('bundles/endroidsudoku/builds/index.js') }}"></script>
 
 {% endblock %}

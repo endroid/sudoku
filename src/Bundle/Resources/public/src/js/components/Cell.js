@@ -17,7 +17,7 @@ class Cell extends React.Component {
 
     render() {
         return (
-            <div width="11%">
+            <div>
                 <input name={this.props.name} type="number" min="1" max="9" value={this.state.value} onChange={this.onTextChange} />
             </div>
         )

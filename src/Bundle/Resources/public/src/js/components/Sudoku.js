@@ -9,22 +9,30 @@ class Sudoku extends React.Component {
 
     render() {
 
-        let sudoku = this;
-
-        let rows = [];
-        for (let rowIndex = 0; rowIndex < 9; rowIndex++) {
-            let columns = [];
-            for (let colIndex = 0; colIndex < 9; colIndex++) {
-                let key = rowIndex + "" + colIndex;
-                columns.push(<Cell key={key} name={key} value={this.props.cells[key].value} options={this.props.cells[key].options} onChange={this.props.onChange} />)
+        let tbodyArray = [];
+        for (let tbodyIndex = 0; tbodyIndex < 3; tbodyIndex++) {
+            let trArray = [];
+            for (let trIndex = 0; trIndex < 3; trIndex++) {
+                let tdArray = [];
+                for (let tdIndex = 0; tdIndex < 9; tdIndex++) {
+                    let rowIndex = tbodyIndex * 3 + trIndex;
+                    let key = rowIndex + "" + tdIndex;
+                    tdArray.push(<td key={tdIndex}><Cell name={key} value={this.props.cells[key].value} options={this.props.cells[key].options} onChange={this.props.onChange} /></td>);
+                }
+                trArray.push(<tr key={trIndex}>{tdArray}</tr>);
             }
-            rows.push(<div key={rowIndex} className="row">{columns}</div>)
+            tbodyArray.push(<tbody key={tbodyIndex}>{trArray}</tbody>);
         }
 
+        let valid = this.props.valid ? 'valid' : 'invalid';
+
         return (
-            <div id="sudoku">
-                {rows}
-            </div>
+            <table id="sudoku" className={valid}>
+                <colgroup><col></col><col></col><col></col></colgroup>
+                <colgroup><col></col><col></col><col></col></colgroup>
+                <colgroup><col></col><col></col><col></col></colgroup>
+                {tbodyArray}
+            </table>
         );
     }
 }

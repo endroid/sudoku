@@ -11,15 +11,15 @@ class Application extends React.Component {
 
         this.onChange = this.onChange.bind(this);
 
-        this.loadState();
+        this.loadState(this.props.values);
 
         this.state = { sudoku: null };
     }
 
-    loadState() {
+    loadState(values) {
         let loadPath = this.props.loadPath;
-        if (this.state) {
-            loadPath += '?values=' + this.state.sudoku.string;
+        if (values) {
+            loadPath += '?values=' + values;
         }
         Request.get(loadPath).then((response) => {
             this.setState(response.body);
@@ -30,7 +30,7 @@ class Application extends React.Component {
         this.state.sudoku.cells[event.target.name].value = event.target.value;
         this.updateStringRepresentation();
         this.setState(this.state);
-        this.loadState();
+        this.loadState(this.state.sudoku.string);
     }
 
     updateStringRepresentation() {
@@ -57,7 +57,7 @@ class Application extends React.Component {
 
         return (
             <div>
-                <Sudoku cells={this.state.sudoku.cells} onChange={this.onChange} />
+                <Sudoku cells={this.state.sudoku.cells} onChange={this.onChange} valid={this.state.sudoku.valid}  />
                 <a href={url}>Permalink</a>
             </div>
         );
