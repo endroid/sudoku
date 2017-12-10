@@ -9,6 +9,6 @@
 
 namespace Endroid\Sudoku;
 
-class Row extends Section
+final class Row extends AbstractSection
 {
 }

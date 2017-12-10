@@ -7,12 +7,13 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Endroid\Tests\Sudoku;
+namespace Endroid\Sudoku\Tests;
 
-use Endroid\Sudoku\Puzzle;
-use PHPUnit_Framework_TestCase;
+use Endroid\Sudoku\Solver;
+use Endroid\Sudoku\Sudoku;
+use PHPUnit\Framework\TestCase;
 
-class PuzzleTest extends PHPUnit_Framework_TestCase
+class SolverTest extends TestCase
 {
     public function testSolveWithoutGuessing()
     {
@@ -29,8 +30,9 @@ class PuzzleTest extends PHPUnit_Framework_TestCase
             800203009
             005010300';
 
-        $sudoku = new Puzzle($values);
-        $sudoku->solve();
+        $sudoku = Sudoku::fromString($values);
+        $solver = new Solver($sudoku);
+        $solver->solve();
 
         $this->assertTrue($sudoku->isSolved());
     }
@@ -50,8 +52,9 @@ class PuzzleTest extends PHPUnit_Framework_TestCase
             900040500
             470006000';
 
-        $sudoku = new Puzzle($values);
-        $sudoku->solve();
+        $sudoku = Sudoku::fromString($values);
+        $solver = new Solver($sudoku);
+        $solver->solve();
 
         $this->assertTrue($sudoku->isSolved());
     }
@@ -71,8 +74,9 @@ class PuzzleTest extends PHPUnit_Framework_TestCase
             020000600
             400700000';
 
-        $sudoku = new Puzzle($values);
-        $sudoku->solve();
+        $sudoku = Sudoku::fromString($values);
+        $solver = new Solver($sudoku);
+        $solver->solve();
 
         $this->assertTrue($sudoku->isSolved());
     }
@@ -92,8 +96,9 @@ class PuzzleTest extends PHPUnit_Framework_TestCase
             000009070
             000060008';
 
-        $sudoku = new Puzzle($values);
-        $sudoku->solve();
+        $sudoku = Sudoku::fromString($values);
+        $solver = new Solver($sudoku);
+        $solver->solve();
 
         $this->assertTrue($sudoku->isSolved());
     }

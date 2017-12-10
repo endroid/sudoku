@@ -2,33 +2,36 @@
     "name": "endroid/sudoku",
     "description": "Endroid Sudoku solver",
     "keywords": ["endroid", "sudoku", "solver"],
-    "homepage": "https://github.com/endroid/sudoku",
+    "homepage": "https://github.com/endroid/Sudoku",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Jeroen van den Enden",
             "email": "info@endroid.nl",
-            "homepage": "http://endroid.nl/"
+            "homepage": "https://endroid.nl/"
         }
     ],
     "require": {
-        "php": ">=5.4"
+        "php": ">=7.1"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.0|^5.0"
+        "phpunit/phpunit": "^5.7|^6.0",
+        "symfony/var-dumper": "^4.0"
     },
     "autoload": {
         "psr-4": {
-            "Endroid\\Sudoku\\": [ "src/", "tests/" ]
+            "Endroid\\Sudoku\\": "src/"
         }
     },
-    "config": {
-        "bin-dir": "bin"
+    "autoload-dev": {
+        "psr-4": {
+            "Endroid\\Sudoku\\Tests\\": "tests/"
+        }
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-master": "2.x-dev"
         }
     }
 }

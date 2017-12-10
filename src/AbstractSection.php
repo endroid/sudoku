@@ -9,29 +9,41 @@
 
 namespace Endroid\Sudoku;
 
-class Section
+abstract class AbstractSection
 {
-    public $index;
+    private $index;
+    private $cells;
+    private $availableValues;
+    private $sudoku;
+    private $moves;
 
-    public $cells = array();
-
-    public $availableValues = array(1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9);
-
-    public $puzzle;
-
-    public $moves = array();
-
-    public function __construct($index, Puzzle $puzzle)
+    public function __construct(int $index, Sudoku $sudoku)
     {
         $this->index = $index;
-
-        $this->puzzle = $puzzle;
+        $this->sudoku = $sudoku;
+        $this->cells = [];
+        $this->availableValues = array_combine(range(1, 9), range(1, 9));
+        $this->moves = [];
     }
 
-    public function addCell(Cell $cell)
+    public function getIndex(): int
+    {
+        return $this->index;
+    }
+
+    public function getCells(): array
+    {
+        return $this->cells;
+    }
+
+    public function addCell(Cell $cell): void
     {
         $this->cells[] = $cell;
     }
+
+
+
+
 
     public function valueSet($value)
     {
@@ -53,9 +65,8 @@ class Section
             }
         }
 
-        if (count($cells) == 1) {
-            $this->debug('detected unique value in cell '.$cells[0]->key);
-            $this->puzzle->addAssignment($cells[0], $option);
+        if (count($cells) == 1 && $cells[0]->getValue() !== $option) {
+            $this->sudoku->setCellValue($cells[0]->getRowIndex(), $cells[0]->getColumnIndex(), $option, false);
         }
     }
 
@@ -75,7 +86,7 @@ class Section
 
     public function storeMove()
     {
-        $moveIndex = $this->puzzle->moveIndex;
+        $moveIndex = $this->sudoku->moveIndex;
         if ($moveIndex > -1 && !isset($this->moves[$moveIndex])) {
             $this->moves[$moveIndex] = array($this->availableValues);
         }
@@ -83,15 +94,10 @@ class Section
 
     public function undoMove()
     {
-        $moveIndex = $this->puzzle->moveIndex;
+        $moveIndex = $this->sudoku->moveIndex;
         if ($moveIndex > -1 && isset($this->moves[$moveIndex])) {
             $this->availableValues = $this->moves[$moveIndex][0];
             unset($this->moves[$moveIndex]);
         }
-    }
-
-    public function debug($message)
-    {
-        $this->puzzle->debug('Section '.$this->index.' '.$message);
     }
 }

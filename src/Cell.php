@@ -9,27 +9,35 @@
 
 namespace Endroid\Sudoku;
 
-class Cell
+use Endroid\Sudoku\Exception\InvalidAssignmentException;
+
+final class Cell
 {
-    public $key;
-    public $value = null;
+    public $value = 0;
+    public $valueIsPropagated = false;
+
     public $options = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9];
 
     public $adjacentCells = [];
 
+    /** @var Row */
     public $row;
+
+    /** @var Column */
     public $column;
+
+    /** @var Block */
     public $block;
+
+    /** @var AbstractSection[] */
     public $sections = [];
 
-    public $puzzle;
+    public $sudoku;
 
     public $moves = [];
 
-    public function __construct(Row $row, Column $column, Block $block, Puzzle $puzzle)
+    public function __construct(Row $row, Column $column, Block $block, Sudoku $sudoku)
     {
-        $this->key = $row->index.$column->index;
-
         $this->sections[] = $this->row = $row;
         $this->sections[] = $this->column = $column;
         $this->sections[] = $this->block = $block;
@@ -38,13 +46,35 @@ class Cell
         $this->column->addCell($this);
         $this->block->addCell($this);
 
-        $this->puzzle = $puzzle;
+        $this->sudoku = $sudoku;
     }
+
+    public function getValue(): int
+    {
+        return $this->value;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    public function getRowIndex(): int
+    {
+        return $this->row->getIndex();
+    }
+
+    public function getColumnIndex(): int
+    {
+        return $this->column->getIndex();
+    }
+
+
 
     public function setAdjacentCells()
     {
         foreach ($this->sections as $section) {
-            foreach ($section->cells as $cell) {
+            foreach ($section->getCells() as $cell) {
                 if ($cell != $this && !in_array($cell->key, $this->adjacentCells)) {
                     $this->adjacentCells[$cell->key] = $cell;
                 }
@@ -52,27 +82,46 @@ class Cell
         }
     }
 
-    public function setValue($value)
+    public function setValue(int $value, bool $propagate = false): void
     {
-        $this->debug('setting value to '.$value);
+        if ($this->value === $value) {
+            return;
+        }
+
+        if ($this->value > 0 && $this->value !== $value) {
+            throw new InvalidAssignmentException('Setting cell value [' . $this->row->getIndex() . ', ' . $this->column->getIndex() . '] to ' . $value . ' while it was already set to ' . $this->value);
+        }
 
         $this->storeMove();
 
         $this->value = $value;
 
+        if ($propagate) {
+            $this->propagateValue();
+        }
+    }
+
+    public function propagateValue(): void
+    {
+        if ($this->valueIsPropagated) {
+            return;
+        }
+
         foreach ($this->options as $option) {
-            $this->removeOption($option);
+            if ($option !== $this->value) {
+                $this->removeOption($option);
+            }
         }
 
         foreach ($this->sections as $section) {
-            $section->valueSet($value);
+            $section->valueSet($this->value);
         }
 
         foreach ($this->adjacentCells as $cell) {
-            $cell->removeOption($value);
+            $cell->removeOption($this->value);
         }
 
-        $this->debug($this->puzzle);
+        $this->valueIsPropagated = true;
     }
 
     public function removeOption($option)
@@ -85,17 +134,17 @@ class Cell
 
         unset($this->options[$option]);
 
-        if ($this->value === null && count($this->options) == 0) {
+        if ($this->value === 0 && count($this->options) == 0) {
             throw new \Exception('Cell '.$this->key.' has no options left');
         }
 
-        $this->puzzle->addOptionRemoved($this, $option);
+        $this->sudoku->addOptionRemoved($this, $option);
     }
 
     public function propagateOptionRemoved($option)
     {
-        if (count($this->options) == 1) {
-            $this->puzzle->addAssignment($this, end($this->options));
+        if (count($this->options) == 1 && $this->value === 0) {
+            $this->sudoku->setCellValue($this->getRowIndex(), $this->getColumnIndex(), end($this->options), true);
         }
 
         foreach ($this->sections as $section) {
@@ -106,7 +155,7 @@ class Cell
 
     public function storeMove()
     {
-        $moveIndex = $this->puzzle->moveIndex;
+        $moveIndex = $this->sudoku->moveIndex;
         if ($moveIndex > -1 && !isset($this->moves[$moveIndex])) {
             $this->moves[$moveIndex] = [$this->options, $this->value];
         }
@@ -114,7 +163,7 @@ class Cell
 
     public function undoMove()
     {
-        $moveIndex = $this->puzzle->moveIndex;
+        $moveIndex = $this->sudoku->moveIndex;
         if ($moveIndex > -1 && isset($this->moves[$moveIndex])) {
             $this->options = $this->moves[$moveIndex][0];
             $this->value = $this->moves[$moveIndex][1];
@@ -130,13 +179,8 @@ class Cell
     public function toArray()
     {
         return [
-            'value' => is_null($this->value) ? '' : $this->value,
+            'value' => $this->value === 0 ? '' : $this->value,
             'options' => $this->options,
         ];
-    }
-
-    public function debug($message)
-    {
-        $this->puzzle->debug('Cell '.$this->key.' '.$message);
     }
 }

@@ -7,14 +7,10 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Endroid\Sudoku\Tests;
+namespace Endroid\Sudoku\Exception;
 
-use PHPUnit\Framework\TestCase;
+use Exception;
 
-class CellTest extends TestCase
+abstract class SudokuException extends Exception
 {
-    public function testNoTestsYet()
-    {
-        $this->assertTrue(true);
-    }
 }

@@ -1,7 +1,7 @@
 Sudoku
 ======
 
-*By [endroid](http://endroid.nl/)*
+*By [endroid](https://endroid.nl/)*
 
 [![Latest Stable Version](http://img.shields.io/packagist/v/endroid/sudoku.svg)](https://packagist.org/packages/endroid/sudoku)
 [![Build Status](https://secure.travis-ci.org/endroid/Sudoku.png)](http://travis-ci.org/endroid/Sudoku)

@@ -9,6 +9,17 @@
 
 namespace Endroid\Sudoku;
 
-final class Block extends AbstractSection
+final class Solver
 {
+    private $sudoku;
+
+    public function __construct(Sudoku $sudoku)
+    {
+        $this->sudoku = $sudoku;
+    }
+
+    public function solve()
+    {
+        $this->sudoku->solve();
+    }
 }

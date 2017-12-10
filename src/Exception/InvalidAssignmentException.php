@@ -7,10 +7,8 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Endroid\Sudoku\Bundle;
+namespace Endroid\Sudoku\Exception;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-
-class EndroidSudokuBundle extends Bundle
+class InvalidAssignmentException extends SudokuException
 {
 }
