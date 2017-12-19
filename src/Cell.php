@@ -69,8 +69,6 @@ final class Cell
         return $this->column->getIndex();
     }
 
-
-
     public function setAdjacentCells()
     {
         foreach ($this->sections as $section) {
@@ -89,7 +87,7 @@ final class Cell
         }
 
         if ($this->value > 0 && $this->value !== $value) {
-            throw new InvalidAssignmentException('Setting cell value [' . $this->row->getIndex() . ', ' . $this->column->getIndex() . '] to ' . $value . ' while it was already set to ' . $this->value);
+            throw new InvalidAssignmentException('Setting cell value ['.$this->row->getIndex().', '.$this->column->getIndex().'] to '.$value.' while it was already set to '.$this->value);
         }
 
         $this->storeMove();
@@ -134,7 +132,7 @@ final class Cell
 
         unset($this->options[$option]);
 
-        if ($this->value === 0 && count($this->options) == 0) {
+        if (0 === $this->value && 0 == count($this->options)) {
             throw new \Exception('Cell '.$this->key.' has no options left');
         }
 
@@ -143,7 +141,7 @@ final class Cell
 
     public function propagateOptionRemoved($option)
     {
-        if (count($this->options) == 1 && $this->value === 0) {
+        if (1 == count($this->options) && 0 === $this->value) {
             $this->sudoku->setCellValue($this->getRowIndex(), $this->getColumnIndex(), end($this->options), true);
         }
 
@@ -179,7 +177,7 @@ final class Cell
     public function toArray()
     {
         return [
-            'value' => $this->value === 0 ? '' : $this->value,
+            'value' => 0 === $this->value ? '' : $this->value,
             'options' => $this->options,
         ];
     }

@@ -126,6 +126,7 @@ final class Sudoku
                     try {
                         $this->doMove($move);
                         $this->solve($depth + 1);
+
                         return true;
                     } catch (\Exception $exception) {
                         $this->undoMove();
@@ -165,7 +166,7 @@ final class Sudoku
         return true;
     }
 
-    protected function doMove($move)
+    private function doMove($move)
     {
         $this->moveIndex = count($this->moves);
         $this->moves[$this->moveIndex] = $move;
@@ -179,7 +180,7 @@ final class Sudoku
         }
     }
 
-    protected function undoMove()
+    private function undoMove()
     {
         if ($this->moveIndex > -1 && isset($this->storedMoves[$this->moveIndex])) {
             $this->unpropagatedCells = $this->storedMoves[$this->moveIndex][0];

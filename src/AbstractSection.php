@@ -41,10 +41,6 @@ abstract class AbstractSection
         $this->cells[] = $cell;
     }
 
-
-
-
-
     public function valueSet($value)
     {
         if (!isset($this->availableValues[$value])) {
@@ -65,7 +61,7 @@ abstract class AbstractSection
             }
         }
 
-        if (count($cells) == 1 && $cells[0]->getValue() !== $option) {
+        if (1 == count($cells) && $cells[0]->getValue() !== $option) {
             $this->sudoku->setCellValue($cells[0]->getRowIndex(), $cells[0]->getColumnIndex(), $option, false);
         }
     }
