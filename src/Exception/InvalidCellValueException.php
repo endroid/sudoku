@@ -7,8 +7,8 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Endroid\Sudoku;
+namespace Endroid\Sudoku\Exception;
 
-final class Block extends AbstractSection
+class InvalidCellValueException extends SudokuException
 {
 }

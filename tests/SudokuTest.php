@@ -9,17 +9,18 @@
 
 namespace Endroid\Sudoku\Tests;
 
+use Endroid\Sudoku\Factory;
 use Endroid\Sudoku\Solver;
 use Endroid\Sudoku\Sudoku;
 use PHPUnit\Framework\TestCase;
 
-class SolverTest extends TestCase
+class SudokuTest extends TestCase
 {
     public function testSolveWithoutGuessing()
     {
         set_time_limit(60);
 
-        $values = '
+        $sudoku = Factory::createFromString('
             003020600
             900305001
             001806400
@@ -28,13 +29,13 @@ class SolverTest extends TestCase
             006708200
             002609500
             800203009
-            005010300';
+            005010300
+        ');
 
-        $sudoku = Sudoku::fromString($values);
         $solver = new Solver($sudoku);
         $solver->solve();
 
-        $this->assertTrue($sudoku->isSolved());
+        $this->assertTrue($solver->isSolved());
     }
 
     public function testSolvePlatinumBlonde()

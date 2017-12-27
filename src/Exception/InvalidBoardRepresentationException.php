@@ -7,8 +7,8 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Endroid\Sudoku;
+namespace Endroid\Sudoku\Exception;
 
-final class Column extends AbstractSection
+class InvalidBoardRepresentationException extends SudokuException
 {
 }
