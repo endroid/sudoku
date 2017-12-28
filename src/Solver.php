@@ -26,8 +26,11 @@ final class Solver
 
     public function solve(): void
     {
+        echo $this->board->toHtmlString();
         $this->removeOptions();
+        echo $this->board->toHtmlString();
         $this->checkSectionUniques();
+        echo $this->board->toHtmlString();
     }
 
     public function removeOptions(): void

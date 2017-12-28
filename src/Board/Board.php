@@ -135,6 +135,12 @@ final class Board
         return $this->sections;
     }
 
+
+
+
+
+
+
     public function toArray(): array
     {
         $values = [];
@@ -146,6 +152,33 @@ final class Board
         }
 
         return $values;
+    }
+
+    public function toHtmlString(): string
+    {
+        $htmlString = '
+            <style>
+                .sudoku { display: table; width: 100%; }
+                .row { display: table-row; }
+                .cell { display: table-cell; border: 1px solid #555; padding: 10px; text-align: center; }
+                .value { font-weight: bold; font-size: 2em; }
+            </style>';
+        $htmlString .= '<div class="sudoku">';
+        for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
+            $htmlString .= '<div class="row">';
+            for ($columnIndex = 0; $columnIndex < 9; $columnIndex++) {
+                $blockIndex = intval(floor($rowIndex / 3) * 3 + floor($columnIndex / 3));
+                $htmlString .= '<div class="cell" style="background-color: #'.$blockIndex.'f'.(9 - $blockIndex).'fff;">';
+                $htmlString .= '<div class="value">'.$this->cells[$rowIndex][$columnIndex]->getValue().'</div><br />';
+                $htmlString .= 'options: '.implode(',', $this->cells[$rowIndex][$columnIndex]->getOptions());
+                $htmlString .= '</div>';
+            }
+            $htmlString .= '</div>';
+        }
+        $htmlString .= '</div>';
+        $htmlString .= '<br /><br />';
+
+        return $htmlString;
     }
 
 
@@ -259,22 +292,5 @@ final class Board
 //
 
 //
-//    public function toMultiLineString()
-//    {
-//        $string = $this->__toString();
-//
-//        return chunk_split($string, 9, "\n");
-//    }
-//
-//    public function __toString()
-//    {
-//        $string = '';
-//        foreach ($this->rows as $row) {
-//            foreach ($this->columns as $column) {
-//                $string .= $this->cells[$row->getIndex()][$column->getIndex()];
-//            }
-//        }
-//
-//        return $string;
-//    }
+
 }
