@@ -9,20 +9,32 @@
 
 namespace Endroid\Sudoku\Board;
 
+use Endroid\Sudoku\AbstractAction;
 use Endroid\Sudoku\Exception\InvalidBoardRepresentationException;
 use Iterator;
+use Ramsey\Uuid\Uuid;
 
 final class Board
 {
+    /**
+     * @var string
+     */
+    private $id;
+
     /**
      * @var Cell[][]
      */
     private $cells;
 
-    private $rows;
-    private $columns;
-    private $blocks;
+    /**
+     * @var Section[]
+     */
     private $sections;
+
+    /**
+     * @var AbstractAction[]
+     */
+    private $actions;
 
 //    private $unpropagatedCells;
 //
@@ -36,41 +48,36 @@ final class Board
 
     public function __construct()
     {
-        $this->initialize();
+        $this->id = Uuid::uuid4()->toString();
+        $this->cells = [];
+        $this->sections = [];
     }
 
-    private function initialize(): void
+    public function getId(): string
     {
-        $this->rows = [];
-        for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-            $this->rows[$rowIndex] = new Section($rowIndex);
-        }
+        return $this->id;
+    }
 
-        $this->columns = [];
-        for ($columnIndex = 0; $columnIndex < 9; $columnIndex++) {
-            $this->columns[$columnIndex] = new Section($columnIndex);
-        }
+    public function addSection(Section $section): void
+    {
+        $this->sections[] = $section;
+        $section->addBoard($this);
 
-        $this->blocks = [];
-        for ($blockIndex = 0; $blockIndex < 9; $blockIndex++) {
-            $this->blocks[$blockIndex] = new Section($blockIndex);
+        foreach ($section->getCells() as $cell) {
+            $this->addCell($cell);
+            $this->cells[$cell->getId()] = $cell;
         }
+    }
 
-        $this->cells = [];
-        for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-            $this->cells[$rowIndex] = [];
-            for ($columnIndex = 0; $columnIndex < 9; $columnIndex++) {
-                $cell = new Cell();
-                $cell->setPosition(
-                    $this->rows[$rowIndex],
-                    $this->columns[$columnIndex],
-                    $this->blocks[intval(floor($rowIndex / 3) * 3 + floor($columnIndex / 3))]
-                );
-                $this->cells[$rowIndex][$columnIndex] = $cell;
-            }
-        }
+    private function addCell(Cell $cell): void
+    {
+        $cell->addBoard($board);
+        $this->cells[$cell->getId()] = $cell;
+    }
 
-        $this->sections = array_merge($this->rows, $this->columns, $this->blocks);
+    private function createDefaultSections(): void
+    {
+
     }
 
     public static function createFromString(string $values): self
@@ -141,18 +148,6 @@ final class Board
 
 
 
-    public function toArray(): array
-    {
-        $values = [];
-        foreach ($this->cells as $rowIndex => $row) {
-            $values[$rowIndex] = [];
-            foreach ($row as $columnIndex => $cell) {
-                $values[$rowIndex][$columnIndex] = $cell->getValue();
-            }
-        }
-
-        return $values;
-    }
 
     public function toHtmlString(): string
     {
@@ -186,13 +181,6 @@ final class Board
 
 
 
-
-//    public function addOptionRemoved($cell, $option)
-//    {
-//        $this->storeMove();
-//
-//        $this->optionsRemoved[] = [$cell, $option];
-//    }
 //
 //    public function solve($deep = true, $depth = 0)
 //    {

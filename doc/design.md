@@ -1,6 +1,64 @@
+# Features
+
+* Create custom sections additional to the default rows, columns and blocks.
+* Build a custom solver while making use of board propagation.
+* Combine multiple boards by using the same cells in sections.
+
 # Concepts
 
-The concepts of which 
+## Board
+
+A board is constituted of a number of cells and sections that restrict the
+possible values of those cells.
+
+## Section
+
+A section is an region that restricts the possible values of the cells within
+the section in the following way: for a region holding N cells, each cell in
+the section should get a value unique for that section and in the range [1,N].
+Cells within a region are not necessarily adjacent.
+
+## Cell
+
+A cell is a single unit on a board and only holds a value and available options.
+As a cell can be used on multiple boards and can have different positions on
+each board, a cell is not indexed but it gets a unique identifier from its
+creator.
+
+# Visualization
+
+The sudoku as described here is not expressed in coordinates so the user is
+free how to display the cells and sections. This way you could even create a
+3D puzzle.
+
+When we create a board, first the cells are created that constitute the board.
+Other concepts like a row, a column or a block are defined afterwards. We can
+have a cell without a section being defined yet. You could think of all kinds
+of sections, but in Sudoku variants the most common are row, column and block.
+Extra sections can be defined via the createSection method, which accepts the
+coordinates of the cells to add as a parameter.
+
+Whatever sections exist, each cell has a fixed place on the board and will be
+indexed as its position on the board. Sections are indexed in the order they
+are created.
+
+# Goals
+
+The goal of this library is helping a user solve a Sudoku. This can be done
+by simply reducing all options, providing a value or even completely solving
+the puzzle for the user.
+
+# Control flow
+
+Given the goals described above, we don't want the board to solve itself.
+
+
+
+Cells and sections are smart enough to make their own decisions but they can
+not effectively perform an action like removing an option or setting a value.
+Instead it notifies the solver that an action may be performed on the board.
+The actor can then decide on how to handle those instructions.
+
 
 A sudoku puzzle is constituted by a board, which has rows, columns and blocks.
 Each row, column or block (called a section) has nine cells which overlap with

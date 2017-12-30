@@ -9,42 +9,53 @@
 
 namespace Endroid\Sudoku\Board;
 
+use Ramsey\Uuid\Uuid;
+
 final class Section
 {
-    private $index;
+    /**
+     * @var string
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $name;
 
     /**
      * @var Cell[]
      */
     private $cells;
 
-    private $availableValues;
+    /**
+     * @var Board[]
+     */
+    private $boards;
 
-//    private $moves;
-
-    public function __construct(string $index)
+    public function __construct(array $cells)
     {
-        $this->index = $index;
+        $this->id = Uuid::uuid4()->toString();
 
-        $this->cells = [];
-        $this->availableValues = [
-            1 => 1,
-            2 => 2,
-            3 => 3,
-            4 => 4,
-            5 => 5,
-            6 => 6,
-            7 => 7,
-            8 => 8,
-            9 => 9
-        ];
-
-//        $this->moves = [];
+        foreach ($cells as $cell) {
+            $cell->addSection($this);
+            $this->cells[$cell->getId()] = $cell;
+        }
     }
 
-    public function getIndex(): string
+    public function getId(): string
     {
-        return $this->index;
+        return $this->id;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
     }
 
     public function getCells(): array
@@ -62,12 +73,9 @@ final class Section
         $this->cells[] = $cell;
     }
 
-    /**
-     * @return int[]
-     */
-    public function getAvailableValues(): array
+    public function addBoard(Board $board): void
     {
-        return $this->availableValues;
+        $this->boards[$board->getId()] = $board;
     }
 
 
@@ -94,37 +102,7 @@ final class Section
 //        unset($this->availableValues[$value]);
 //    }
 
-    public function checkUnique(int $option): void
-    {
 
-
-
-        $cells = array();
-        foreach ($this->cells as $cell) {
-            if (in_array($option, $cell->options)) {
-                $cells[] = $cell;
-            }
-        }
-
-        if (1 == count($cells) && $cells[0]->getValue() !== $option) {
-            $this->sudoku->setCellValue($cells[0]->getRowIndex(), $cells[0]->getColumnIndex(), $option, false);
-        }
-    }
-
-//    public function checkAvailableOptions(): void
-//    {
-//        $options = array();
-//        foreach ($this->cells as $cell) {
-//            foreach ($cell->options as $option) {
-//                $options[$option] = true;
-//            }
-//        }
-//
-//        if (count($options) < count($this->availableValues)) {
-//            throw new \Exception('Not enough options left in '.get_class($this).' '.$this->index);
-//        }
-//    }
-//
 //    private function storeMove()
 //    {
 //        $moveIndex = $this->sudoku->moveIndex;

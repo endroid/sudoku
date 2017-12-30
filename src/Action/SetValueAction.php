@@ -9,16 +9,10 @@
 
 namespace Endroid\Sudoku;
 
-use Endroid\Sudoku\Board\Board;
-use Endroid\Sudoku\Board\Cell;
-use Endroid\Sudoku\Exception\InvalidSudokuStringException;
-
-final class Factory
+final class SetValueAction
 {
-    public static function createFromString(string $values): Board
+    public function __construct()
     {
 
     }
-
-
 }

@@ -10,27 +10,35 @@
 namespace Endroid\Sudoku\Board;
 
 use Endroid\Sudoku\Exception\InvalidCellValueException;
+use Endroid\Sudoku\Exception\NoMoreOptionsLeftException;
+use Ramsey\Uuid\Uuid;
 
 final class Cell
 {
-    private $index;
+    /**
+     * @var string
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $name;
+
+    /**
+     * @var int
+     */
     private $value;
+
+    /**
+     * @var int[]
+     */
     private $options;
 
     /**
-     * @var Section
+     * @var Board[]
      */
-    private $row;
-
-    /**
-     * @var Section
-     */
-    private $column;
-
-    /**
-     * @var Section
-     */
-    private $block;
+    private $boards;
 
     /**
      * @var Section[]
@@ -44,25 +52,28 @@ final class Cell
 
     public function __construct()
     {
+        $this->id = Uuid::uuid4()->toString();
+
         $this->value = 0;
-        $this->options = [
-            1 => 1,
-            2 => 2,
-            3 => 3,
-            4 => 4,
-            5 => 5,
-            6 => 6,
-            7 => 7,
-            8 => 8,
-            9 => 9
-        ];
+        $this->options = [];
+        $this->boards = [];
         $this->sections = [];
         $this->adjacentCells = [];
     }
 
-    public function getIndex(): string
+    public function getId(): string
     {
-        return $this->index;
+        return $this->id;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
     }
 
     public function getValue(): int
@@ -73,28 +84,57 @@ final class Cell
     public function setValue(int $value): void
     {
         if (!isset($this->options[$value])) {
-            throw new InvalidCellValueException(sprintf('Invalid value %s for cell, available options are [%s]', $value, implode(',', $this->options)));
+            throw new InvalidCellValueException(sprintf('Invalid value %s for cell %s, available options are [%s]', $value, $this->name, implode(',', $this->options)));
         }
 
         $this->value = $value;
         $this->options = [$value => $value];
     }
 
+
+
+
+
+
+
+
+
+
+
+    public function setState(int $value, array $options): void
+    {
+        $this->value = $value;
+        $this->options = $options;
+    }
+
+
+
     public function getOptions(): array
     {
         return $this->options;
     }
 
+    public function setOptions(array $options): void
+    {
+        $this->options = $options;
+    }
+
     public function removeOption(int $option): void
     {
+        echo 'Removing option '.$option.' for cell '.$this->getIndex().'<br />';
+
         unset($this->options[$option]);
 
         if (count($this->options) === 1 && $this->value === 0) {
             $this->setValue(current($this->options));
         }
+
+        if (count($this->options) === 0) {
+            throw new NoMoreOptionsLeftException(sprintf('No more options left for cell %s', $this->index));
+        }
     }
 
-    public function setPosition(Section $row, Section $column, Section $block): void
+    public function setPosition(Row $row, Column $column, Block $block): void
     {
         $this->row = $row;
         $this->column = $column;
