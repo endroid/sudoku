@@ -2,7 +2,7 @@
     "name": "endroid/sudoku",
     "description": "Endroid Sudoku solver",
     "keywords": ["endroid", "sudoku", "solver"],
-    "homepage": "https://github.com/endroid/Sudoku",
+    "homepage": "https://github.com/endroid/sudoku",
     "type": "library",
     "license": "MIT",
     "authors": [
