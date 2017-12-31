@@ -13,6 +13,5 @@ final class SetValueAction
 {
     public function __construct()
     {
-
     }
 }

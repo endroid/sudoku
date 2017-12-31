@@ -78,19 +78,6 @@ final class Section
         $this->boards[$board->getId()] = $board;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 //    public function valueSet(int $value): void
 //    {
 //        if (!isset($this->availableValues[$value])) {
@@ -101,7 +88,6 @@ final class Section
 //
 //        unset($this->availableValues[$value]);
 //    }
-
 
 //    private function storeMove()
 //    {

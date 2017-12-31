@@ -1,7 +1,7 @@
 {
     "name": "endroid/sudoku",
     "description": "Endroid Sudoku solver",
-    "keywords": ["endroid", "sudoku", "solver"],
+    "keywords": ["endroid", "sudoku", "solver", "php"],
     "homepage": "https://github.com/endroid/sudoku",
     "type": "library",
     "license": "MIT",

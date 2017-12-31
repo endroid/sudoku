@@ -91,23 +91,11 @@ final class Cell
         $this->options = [$value => $value];
     }
 
-
-
-
-
-
-
-
-
-
-
     public function setState(int $value, array $options): void
     {
         $this->value = $value;
         $this->options = $options;
     }
-
-
 
     public function getOptions(): array
     {
@@ -125,11 +113,11 @@ final class Cell
 
         unset($this->options[$option]);
 
-        if (count($this->options) === 1 && $this->value === 0) {
+        if (1 === count($this->options) && 0 === $this->value) {
             $this->setValue(current($this->options));
         }
 
-        if (count($this->options) === 0) {
+        if (0 === count($this->options)) {
             throw new NoMoreOptionsLeftException(sprintf('No more options left for cell %s', $this->index));
         }
     }

@@ -11,5 +11,4 @@ namespace Endroid\Sudoku;
 
 abstract class AbstractAction
 {
-
 }

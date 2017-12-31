@@ -1,5 +1,4 @@
-Sudoku
-======
+# Sudoku
 
 *By [endroid](https://endroid.nl/)*
 

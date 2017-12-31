@@ -77,7 +77,6 @@ final class Board
 
     private function createDefaultSections(): void
     {
-
     }
 
     public static function createFromString(string $values): self
@@ -106,7 +105,7 @@ final class Board
     private static function validateBoardRepresentation(array $values): void
     {
         foreach ($values as $row) {
-            if (count($values) !== 9 || count($row) !== 9) {
+            if (9 !== count($values) || 9 !== count($row)) {
                 throw new InvalidBoardRepresentationException('The input should consist of exactly 9 rows of 9 numbers in the range 0 (unknown) to 9');
             }
         }
@@ -127,8 +126,8 @@ final class Board
 
     public function getCellsIterator(): Iterator
     {
-        for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-            for ($columnIndex = 0; $columnIndex < 9; $columnIndex++) {
+        for ($rowIndex = 0; $rowIndex < 9; ++$rowIndex) {
+            for ($columnIndex = 0; $columnIndex < 9; ++$columnIndex) {
                 yield $this->cells[$rowIndex][$columnIndex];
             }
         }
@@ -142,13 +141,6 @@ final class Board
         return $this->sections;
     }
 
-
-
-
-
-
-
-
     public function toHtmlString(): string
     {
         $htmlString = '
@@ -159,9 +151,9 @@ final class Board
                 .value { font-weight: bold; font-size: 2em; }
             </style>';
         $htmlString .= '<div class="sudoku">';
-        for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
+        for ($rowIndex = 0; $rowIndex < 9; ++$rowIndex) {
             $htmlString .= '<div class="row">';
-            for ($columnIndex = 0; $columnIndex < 9; $columnIndex++) {
+            for ($columnIndex = 0; $columnIndex < 9; ++$columnIndex) {
                 $blockIndex = intval(floor($rowIndex / 3) * 3 + floor($columnIndex / 3));
                 $htmlString .= '<div class="cell" style="background-color: #'.$blockIndex.'f'.(9 - $blockIndex).'fff;">';
                 $htmlString .= '<div class="value">'.$this->cells[$rowIndex][$columnIndex]->getValue().'</div><br />';
@@ -175,11 +167,6 @@ final class Board
 
         return $htmlString;
     }
-
-
-
-
-
 
 //
 //    public function solve($deep = true, $depth = 0)
@@ -278,7 +265,4 @@ final class Board
 //        --$this->moveIndex;
 //    }
 //
-
-//
-
 }

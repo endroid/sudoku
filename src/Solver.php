@@ -46,7 +46,7 @@ final class Solver
 
         /** @var Cell $cell */
         foreach ($this->board->getCellsIterator() as $cell) {
-            if ($cell->getValue() !== 0 && !in_array($cell, $this->propagatedCells)) {
+            if (0 !== $cell->getValue() && !in_array($cell, $this->propagatedCells)) {
                 $foundCellsToPropagate = true;
                 foreach ($cell->getAdjacentCells() as $adjacentCell) {
                     $adjacentCell->removeOption($cell->getValue());
@@ -72,14 +72,14 @@ final class Solver
             /** @var Cell[][] $cellsByOption */
             $cellsByOption = [];
             foreach ($section->getCells() as $cell) {
-                if ($cell->getValue() === 0) {
+                if (0 === $cell->getValue()) {
                     foreach ($cell->getOptions() as $option) {
                         $cellsByOption[$option][] = $cell;
                     }
                 }
             }
             foreach ($cellsByOption as $option => $cells) {
-                if (count($cells) === 1) {
+                if (1 === count($cells)) {
                     $foundCellsToSetValue = true;
                     $cells[0]->setValue($option);
                 }
@@ -121,7 +121,7 @@ final class Solver
 
         /** @var Cell $cell */
         foreach ($this->board->getCellsIterator() as $cell) {
-            if ($cell->getValue() === 0) {
+            if (0 === $cell->getValue()) {
                 foreach ($cell->getOptions() as $option) {
                     $this->states[] = State::create($this->board, $this->propagatedCells);
                     echo 'Trying option '.$option.' for cell '.$cell->getIndex().'<br />';
@@ -135,6 +135,7 @@ final class Solver
                         $cell->removeOption($option);
                     }
                 }
+
                 return; // Next cell values are already defined recursively
             }
         }
@@ -149,6 +150,5 @@ final class Solver
 
     public function hint(): void
     {
-
     }
 }

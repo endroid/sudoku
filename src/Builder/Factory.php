@@ -21,8 +21,8 @@ final class Factory
         $board = self::create();
 
         $cellsPerSection = [];
-        for ($rowIndex = 0; $rowIndex < 9; $rowIndex++) {
-            for ($columnIndex = 0; $columnIndex < 9; $columnIndex++) {
+        for ($rowIndex = 0; $rowIndex < 9; ++$rowIndex) {
+            for ($columnIndex = 0; $columnIndex < 9; ++$columnIndex) {
                 $cell = new Cell();
                 $blockIndex = intval(floor($rowIndex / 3) * 3 + floor($columnIndex / 3));
                 $cellsPerSection['row-'.$rowIndex][] = $cell;
