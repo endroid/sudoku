@@ -3,7 +3,7 @@
 *By [endroid](https://endroid.nl/)*
 
 [![Latest Stable Version](http://img.shields.io/packagist/v/endroid/sudoku.svg)](https://packagist.org/packages/endroid/sudoku)
-[![Build Status](https://secure.travis-ci.org/endroid/Sudoku.png)](http://travis-ci.org/endroid/Sudoku)
+[![Build Status](https://secure.travis-ci.org/endroid/sudoku.png)](http://travis-ci.org/endroid/sudoku)
 [![Total Downloads](http://img.shields.io/packagist/dt/endroid/sudoku.svg)](https://packagist.org/packages/endroid/sudoku)
 [![Monthly Downloads](http://img.shields.io/packagist/dm/endroid/sudoku.svg)](https://packagist.org/packages/endroid/sudoku)
 [![License](http://img.shields.io/packagist/l/endroid/sudoku.svg)](https://packagist.org/packages/endroid/sudoku)
