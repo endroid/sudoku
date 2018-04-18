@@ -7,9 +7,13 @@
  * with this source code in the file LICENSE.
  */
 
-namespace Endroid\Sudoku\Board;
+namespace Endroid\Sudoku\Factory;
 
-final class Factory
+use Endroid\Sudoku\Board\Board;
+use Endroid\Sudoku\Board\Cell;
+use Endroid\Sudoku\Board\Section;
+
+final class BoardFactory
 {
     public static function create(): Board
     {

@@ -15,39 +15,12 @@ use Ramsey\Uuid\Uuid;
 
 final class Cell
 {
-    /**
-     * @var string
-     */
     private $id;
-
-    /**
-     * @var string
-     */
     private $name;
-
-    /**
-     * @var int
-     */
     private $value;
-
-    /**
-     * @var int[]
-     */
     private $options;
-
-    /**
-     * @var Board[]
-     */
     private $boards;
-
-    /**
-     * @var Section[]
-     */
     private $sections;
-
-    /**
-     * @var Cell[]
-     */
     private $adjacentCells;
 
     public function __construct()

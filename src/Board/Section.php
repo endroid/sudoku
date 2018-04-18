@@ -13,24 +13,9 @@ use Ramsey\Uuid\Uuid;
 
 final class Section
 {
-    /**
-     * @var string
-     */
     private $id;
-
-    /**
-     * @var string
-     */
     private $name;
-
-    /**
-     * @var Cell[]
-     */
     private $cells;
-
-    /**
-     * @var Board[]
-     */
     private $boards;
 
     public function __construct(array $cells)
