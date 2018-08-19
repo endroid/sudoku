@@ -9,6 +9,10 @@
 
 namespace Endroid\Sudoku\Exception;
 
-class InvalidCellValueException extends SudokuException
+class InvalidStringRepresentationException extends SudokuException
 {
+    public static function create(string $values): self
+    {
+        return new self('Invalid string representation: %s');
+    }
 }

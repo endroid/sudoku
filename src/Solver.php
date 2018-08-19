@@ -9,146 +9,96 @@
 
 namespace Endroid\Sudoku;
 
-use Endroid\Sudoku\Board\Board;
-use Endroid\Sudoku\Board\Cell;
-use Endroid\Sudoku\Exception\SudokuException;
-
-final class Solver
+class Solver
 {
-    private $board;
+    private $sudoku;
 
-    /**
-     * @var State[]
-     */
-    private $states;
-
+    private $adjacentCells;
     private $propagatedCells;
 
-    public function __construct(Board $board)
+    public function __construct(Sudoku $sudoku)
     {
-        $this->board = $board;
-
-        $this->propagatedCells = [];
+        $this->sudoku = $sudoku;
     }
 
-    public function solve(bool $allowGuessing = true): void
+    public function solve(): void
     {
-        $this->removeOptions();
-
-        if ($allowGuessing) {
-            $this->removeOptionsByGuessing();
-        }
+        $this->findAdjacentCells();
+        $this->reduceOptions();
     }
 
-    public function removeOptions(): void
+    private function reduceOptions(): void
     {
-        $foundCellsToPropagate = false;
+        $progress = false;
 
         /** @var Cell $cell */
-        foreach ($this->board->getCellsIterator() as $cell) {
-            if (0 !== $cell->getValue() && !in_array($cell, $this->propagatedCells)) {
-                $foundCellsToPropagate = true;
-                foreach ($cell->getAdjacentCells() as $adjacentCell) {
+        foreach ($this->sudoku->getCells() as $cell) {
+            if ($cell->isFilled() && !isset($this->propagatedCells[$cell->getX()][$cell->getY()])) {
+                /** @var Cell $adjacentCell */
+                foreach ($this->getAdjacentCells($cell) as $adjacentCell) {
                     $adjacentCell->removeOption($cell->getValue());
                 }
-                $this->propagatedCells[] = $cell;
+                $this->propagatedCells[$cell->getX()][$cell->getY()] = $cell;
+                $progress = true;
             }
         }
 
-        // Process possible new set values while propagating
-        // Otherwise we end up with cells with incorrect options
-        if ($foundCellsToPropagate) {
-            $this->removeOptions();
+        if ($progress) {
+            $this->reduceOptions();
+        } else {
+            $this->findUniques();
         }
     }
 
-    public function checkSectionUniques(): void
+    private function findUniques(): void
     {
-        $this->removeOptions();
+        $progress = false;
 
-        $foundCellsToSetValue = false;
-
-        foreach ($this->board->getSections() as $section) {
-            /** @var Cell[][] $cellsByOption */
+        foreach ($this->sudoku->getSections() as $section) {
             $cellsByOption = [];
+            /** @var Cell $cell */
             foreach ($section->getCells() as $cell) {
-                if (0 === $cell->getValue()) {
+                if (!$cell->isFilled()) {
                     foreach ($cell->getOptions() as $option) {
                         $cellsByOption[$option][] = $cell;
                     }
                 }
             }
+            /** @var Cell[] $cells */
             foreach ($cellsByOption as $option => $cells) {
-                if (1 === count($cells)) {
-                    $foundCellsToSetValue = true;
+                if (count($cells) === 1) {
                     $cells[0]->setValue($option);
+                    $progress = true;
                 }
             }
         }
 
-        if ($foundCellsToSetValue) {
-            $this->checkSectionUniques();
+        if ($progress) {
+            $this->reduceOptions();
         }
     }
 
-//    public function checkAvailableOptions(): void
-//    {
-//        foreach ($this->board->getSections() as $section) {
-//            $availableValues = [];
-//            $availableOptions = [];
-//            foreach ($section->getCells() as $cell) {
-//
-//            }
-//        }
-//
-//        $availableOptions
-//
-//        $options = array();
-//        foreach ($this->cells as $cell) {
-//            foreach ($cell->options as $option) {
-//                $options[$option] = true;
-//            }
-//        }
-//
-//        if (count($options) < count($this->availableValues)) {
-//            throw new \Exception('Not enough options left in '.get_class($this).' '.$this->index);
-//        }
-//    }
-
-    public function removeOptionsByGuessing(): void
+    private function findAdjacentCells(): void
     {
-        echo $this->board->toHtmlString();
-
-        /** @var Cell $cell */
-        foreach ($this->board->getCellsIterator() as $cell) {
-            if (0 === $cell->getValue()) {
-                foreach ($cell->getOptions() as $option) {
-                    $this->states[] = State::create($this->board, $this->propagatedCells);
-                    echo 'Trying option '.$option.' for cell '.$cell->getIndex().'<br />';
-                    $cell->setValue($option);
-                    try {
-                        $this->solve(true);
-                    } catch (SudokuException $exception) {
-                        echo 'Failed option '.$option.' for cell '.$cell->getIndex().': '.$exception->getMessage().'<br />';
-                        echo $this->board->toHtmlString();
-                        $this->restorePreviousState();
-                        $cell->removeOption($option);
+        foreach ($this->sudoku->getSections() as $section) {
+            /** @var Cell $cell */
+            foreach ($section->getCells() as $cell) {
+                /** @var Cell $adjacentCell */
+                foreach ($section->getCells() as $adjacentCell) {
+                    if ($adjacentCell !== $cell) {
+                        $this->adjacentCells[$cell->getX()][$cell->getY()][$adjacentCell->getX()][$adjacentCell->getY()] = $adjacentCell;
                     }
                 }
-
-                return; // Next cell values are already defined recursively
             }
         }
     }
 
-    public function restorePreviousState(): void
+    private function getAdjacentCells(Cell $cell): \Iterator
     {
-        $previousState = array_pop($this->states);
-        $previousState->updateBoard($this->board);
-        $this->propagatedCells = $previousState->getPropagatedCells();
-    }
-
-    public function hint(): void
-    {
+        foreach ($this->adjacentCells[$cell->getX()][$cell->getY()] as $adjacentCells) {
+            foreach ($adjacentCells as $adjacentCell) {
+                yield $adjacentCell;
+            }
+        }
     }
 }

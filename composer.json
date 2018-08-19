@@ -13,8 +13,7 @@
     ],
     "require": {
         "php": ">=7.1",
-        "endroid/installer": "^1.0.3",
-        "ramsey/uuid": "^3.7"
+        "endroid/installer": "^1.0.3"
     },
     "require-dev": {
         "phpunit/phpunit": "^5.7|^6.0",
