@@ -34,8 +34,8 @@ class Factory
 
         $sections = [];
         $sudoku = new Sudoku($base);
-        for ($row = 0; $row < $base; $row++) {
-            for ($column = 0; $column < $base; $column++) {
+        for ($row = 0; $row < $base; ++$row) {
+            for ($column = 0; $column < $base; ++$column) {
                 $cell = $sudoku->createCell($column, $row);
                 if ((int) $values[$row][$column] > 0) {
                     $cell->setValue($values[$row][$column]);
@@ -59,7 +59,7 @@ class Factory
             self::EXAMPLE_NO_GUESSING,
             self::EXAMPLE_PLATINUM_BLONDE,
             self::EXAMPLE_GOLDEN_NUGGET,
-            self::EXAMPLE_RED_DWARF
+            self::EXAMPLE_RED_DWARF,
         ];
     }
 }

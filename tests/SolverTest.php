@@ -9,7 +9,6 @@
 
 namespace Endroid\Sudoku\Tests;
 
-use Endroid\Sudoku\Exception\InvalidStringRepresentationException;
 use Endroid\Sudoku\Factory;
 use Endroid\Sudoku\Solver;
 use PHPUnit\Framework\TestCase;
