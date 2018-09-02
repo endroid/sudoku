@@ -13,10 +13,10 @@ use Endroid\Sudoku\Exception\InvalidStringRepresentationException;
 
 class Factory
 {
-    const EXAMPLE_NO_GUESSING = '. . 3 . 2 . 6 . . 9 . . 3 . 5 . . 1 . . 1 8 . 6 4 . . . . 8 1 . 2 9 . . 7 . . . . . . . 8 . . 6 7 . 8 2 . . . . 2 6 . 9 5 . . 8 . . 2 . 3 . . 9 . . 5 . 1 . 3 . .';
-    const EXAMPLE_PLATINUM_BLONDE = '. . . . . . . 1 2 . . . . . . . . 3 . . 2 3 . . 4 . . . . 1 8 . . . . 5 . 6 . . 7 . 8 . . . . . . . 9 . . . . . 8 5 . . . . . 9 . . . 4 . 5 . . 4 7 . . . 6 . . .';
-    const EXAMPLE_GOLDEN_NUGGET = '. . . . . . . 3 9 . . . . . 1 . . 5 . . 3 . 5 . 8 . . . . 8 . 9 . . . 6 . 7 . . . 2 . . . 1 . . 4 . . . . . . . 9 . 8 . . 5 . . 2 . . . . 6 . . 4 . . 7 . . . . .';
-    const EXAMPLE_RED_DWARF = '1 2 . 3 . . . . 4 3 5 . . . . 1 . . . . 4 . . . . . . . . 5 4 . . 2 . . 6 . . . 7 . . . . . . . . . 8 . 9 . . . 3 1 . . 5 . . . . . . . 9 . 7 . . . . . 6 . . . 8';
+    const NO_GUESSING = '..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3..';
+    const PLATINUM_BLONDE = '.......12........3..23..4....18....5.6..7.8.......9.....85.....9...4.5..47...6...';
+    const GOLDEN_NUGGET = '.......39.....1..5..3.5.8....8.9...6.7...2...1..4.......9.8..5..2....6..4..7.....';
+    const RED_DWARF = '12.3....435....1....4........54..2..6...7.........8.9...31..5.......9.7.....6...8';
 
     /**
      * @throws InvalidStringRepresentationException
@@ -56,10 +56,10 @@ class Factory
     public function getExamples(): array
     {
         return [
-            self::EXAMPLE_NO_GUESSING,
-            self::EXAMPLE_PLATINUM_BLONDE,
-            self::EXAMPLE_GOLDEN_NUGGET,
-            self::EXAMPLE_RED_DWARF,
+            self::NO_GUESSING,
+            self::PLATINUM_BLONDE,
+            self::GOLDEN_NUGGET,
+            self::RED_DWARF,
         ];
     }
 }

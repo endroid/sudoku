@@ -25,8 +25,8 @@ $ composer require endroid/sudoku
 
 use Endroid\Sudoku\Puzzle;
 
-// An difficult puzzle (Platinum Blonde)
-$puzzle = '
+// Load a puzzle
+$sudoku = $this->sudokuFactory->createFromString('
     000000012
     000000003
     002300400
@@ -35,13 +35,12 @@ $puzzle = '
     000009000
     008500000
     900040500
-    470006000';
-
-// Create the puzzle
-$sudoku = new Puzzle($puzzle);
+    470006000
+');
 
 // Solve the puzzle
-echo $sudoku->solve();
+$solver = new Solver($sudoku);
+$solver->solve();
 ```
 
 ## Versioning
