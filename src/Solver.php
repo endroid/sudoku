@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * (c) Jeroen van den Enden <info@endroid.nl>
  *
@@ -34,11 +36,11 @@ class Solver
 
     public function isSolved(): bool
     {
-        /**
+        /*
          * We only have to count the number of propagated cells and not the
          * values because invalid combinations lead to a proper exception.
          */
-        return count($this->propagatedCells, COUNT_RECURSIVE) === 90;
+        return 90 === count($this->propagatedCells, COUNT_RECURSIVE);
     }
 
     private function reduceOptions(): void
@@ -92,7 +94,7 @@ class Solver
 
         $this->setValue($cell, $option);
     }
-    
+
     private function undoGuess(): void
     {
         $originalOptions = $this->getCurrentGuess()->getOriginalOptions();
@@ -106,7 +108,7 @@ class Solver
         foreach ($this->getCurrentGuess()->getPropagatedCells() as $cell) {
             unset($this->propagatedCells[$cell->getX()][$cell->getY()]);
         }
-        
+
         array_pop($this->guesses);
     }
 
@@ -171,7 +173,7 @@ class Solver
 
     private function getCurrentGuess(): ?Guess
     {
-        if (count($this->guesses) === 0) {
+        if (0 === count($this->guesses)) {
             return null;
         }
 

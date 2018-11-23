@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * (c) Jeroen van den Enden <info@endroid.nl>
  *
@@ -52,7 +54,7 @@ class Cell
     {
         unset($this->options[$option]);
 
-        if (count($this->options) === 0) {
+        if (0 === count($this->options)) {
             throw new NoOptionsLeftException();
         }
     }
@@ -69,7 +71,7 @@ class Cell
 
     public function getValue(): ?int
     {
-        if (count($this->options) === 1) {
+        if (1 === count($this->options)) {
             return current($this->options);
         }
 
