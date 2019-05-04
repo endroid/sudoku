@@ -25,7 +25,7 @@ class Factory
      */
     public function createFromString(string $values): Sudoku
     {
-        $values = preg_replace('#[^0-9\.-]*#i', '', $values);
+        $values = (string) preg_replace('#[^0-9\.-]*#i', '', $values);
 
         $base = (int) sqrt(strlen($values));
         if ($base * $base !== strlen($values)) {
@@ -35,7 +35,7 @@ class Factory
         $values = array_chunk(array_map('intval', str_split($values)), $base);
 
         $sections = [];
-        $sudoku = new Sudoku($base);
+        $sudoku = new Sudoku();
         for ($row = 0; $row < $base; ++$row) {
             for ($column = 0; $column < $base; ++$column) {
                 $cell = $sudoku->createCell($column, $row);

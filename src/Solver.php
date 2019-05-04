@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Endroid\Sudoku;
 
+use Endroid\Sudoku\Exception\GuessUnavailableException;
 use Endroid\Sudoku\Exception\NoOptionsLeftException;
 use Endroid\Sudoku\Exception\SudokuException;
 
@@ -52,7 +53,7 @@ class Solver
             if ($cell->isFilled() && !isset($this->propagatedCells[$cell->getX()][$cell->getY()])) {
                 /** @var Cell $adjacentCell */
                 foreach ($this->getAdjacentCells($cell) as $adjacentCell) {
-                    $this->removeOption($adjacentCell, $cell->getValue());
+                    $this->removeOption($adjacentCell, (int) $cell->getValue());
                 }
                 $this->addPropagatedCell($cell);
                 $progress = true;
@@ -97,7 +98,13 @@ class Solver
 
     private function undoGuess(): void
     {
-        $originalOptions = $this->getCurrentGuess()->getOriginalOptions();
+        $currentGuess = $this->getCurrentGuess();
+
+        if (!$currentGuess instanceof Guess) {
+            throw GuessUnavailableException::create();
+        }
+
+        $originalOptions = $currentGuess->getOriginalOptions();
 
         foreach ($originalOptions as $x => $columnOptions) {
             foreach ($columnOptions as $y => $options) {
@@ -105,7 +112,7 @@ class Solver
             }
         }
 
-        foreach ($this->getCurrentGuess()->getPropagatedCells() as $cell) {
+        foreach ($currentGuess->getPropagatedCells() as $cell) {
             unset($this->propagatedCells[$cell->getX()][$cell->getY()]);
         }
 
@@ -114,12 +121,12 @@ class Solver
 
     private function removeOption(Cell $cell, int $option): void
     {
-        if ($this->getCurrentGuess() instanceof Guess) {
-            $this->getCurrentGuess()->setOriginalOptionsFromCell($cell);
-        }
-
         if (!$cell->hasOption($option)) {
             return;
+        }
+
+        if ($this->getCurrentGuess() instanceof Guess) {
+            $this->getCurrentGuess()->setOriginalOptionsFromCell($cell);
         }
 
         $cell->removeOption($option);
