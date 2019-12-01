@@ -58,10 +58,10 @@ class Factory
     public function getExamples(): array
     {
         return [
-            self::NO_GUESSING,
-            self::PLATINUM_BLONDE,
-            self::GOLDEN_NUGGET,
-            self::RED_DWARF,
+            'no_guessing' => self::NO_GUESSING,
+            'platinum_blonde' => self::PLATINUM_BLONDE,
+            'golden_nugget' => self::GOLDEN_NUGGET,
+            'red_dwarf' => self::RED_DWARF,
         ];
     }
 }

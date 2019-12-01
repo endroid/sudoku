@@ -11,10 +11,10 @@ declare(strict_types=1);
 
 namespace Endroid\Sudoku\Exception;
 
-class GuessUnavailableException extends SudokuException
+class MoveUnavailableException extends SudokuException
 {
     public static function create(): self
     {
-        return new self('No guesses available');
+        return new self('No moves available');
     }
 }

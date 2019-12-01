@@ -13,10 +13,16 @@ namespace Endroid\Sudoku;
 
 class Sudoku
 {
+    /** @var array */
     private $cells;
+
+    /** @var array */
     private $sections;
 
+    /** @var int */
     private $width;
+
+    /** @var int */
     private $height;
 
     public function __construct()

@@ -11,21 +11,27 @@ declare(strict_types=1);
 
 namespace Endroid\Sudoku;
 
-use Endroid\Sudoku\Exception\GuessUnavailableException;
+use Endroid\Sudoku\Exception\MoveUnavailableException;
 use Endroid\Sudoku\Exception\NoOptionsLeftException;
 use Endroid\Sudoku\Exception\SudokuException;
 
 class Solver
 {
     private $sudoku;
-    private $guesses;
+
+    /** @var array */
+    private $moves;
+
+    /** @var array */
     private $adjacentCells;
+
+    /** @var array */
     private $propagatedCells;
 
     public function __construct(Sudoku $sudoku)
     {
         $this->sudoku = $sudoku;
-        $this->guesses = [];
+        $this->moves = [];
 
         $this->findAdjacentCells();
     }
@@ -73,13 +79,13 @@ class Solver
         foreach ($this->sudoku->getCells() as $cell) {
             if (!$cell->isFilled()) {
                 foreach ($cell->getOptions() as $option) {
-                    $this->guess($cell, $option);
+                    $this->move($cell, $option);
                     try {
                         $this->solve();
                     } catch (SudokuException $exception) {
                     }
                     if (!$this->isSolved()) {
-                        $this->undoGuess();
+                        $this->undoMove();
                     } else {
                         return;
                     }
@@ -89,22 +95,22 @@ class Solver
         }
     }
 
-    private function guess(Cell $cell, int $option): void
+    private function move(Cell $cell, int $option): void
     {
-        $this->guesses[] = new Guess($cell, $option);
+        $this->moves[] = new Move($cell, $option);
 
         $this->setValue($cell, $option);
     }
 
-    private function undoGuess(): void
+    private function undoMove(): void
     {
-        $currentGuess = $this->getCurrentGuess();
+        $currentMove = $this->getCurrentMove();
 
-        if (!$currentGuess instanceof Guess) {
-            throw GuessUnavailableException::create();
+        if (!$currentMove instanceof Move) {
+            throw MoveUnavailableException::create();
         }
 
-        $originalOptions = $currentGuess->getOriginalOptions();
+        $originalOptions = $currentMove->getOriginalOptions();
 
         foreach ($originalOptions as $x => $columnOptions) {
             foreach ($columnOptions as $y => $options) {
@@ -112,11 +118,11 @@ class Solver
             }
         }
 
-        foreach ($currentGuess->getPropagatedCells() as $cell) {
+        foreach ($currentMove->getPropagatedCells() as $cell) {
             unset($this->propagatedCells[$cell->getX()][$cell->getY()]);
         }
 
-        array_pop($this->guesses);
+        array_pop($this->moves);
     }
 
     private function removeOption(Cell $cell, int $option): void
@@ -125,8 +131,10 @@ class Solver
             return;
         }
 
-        if ($this->getCurrentGuess() instanceof Guess) {
-            $this->getCurrentGuess()->setOriginalOptionsFromCell($cell);
+        $currentMove = $this->getCurrentMove();
+
+        if ($currentMove instanceof Move) {
+            $currentMove->setOriginalOptionsFromCell($cell);
         }
 
         $cell->removeOption($option);
@@ -134,8 +142,10 @@ class Solver
 
     private function setValue(Cell $cell, int $value): void
     {
-        if ($this->getCurrentGuess() instanceof Guess) {
-            $this->getCurrentGuess()->setOriginalOptionsFromCell($cell);
+        $currentMove = $this->getCurrentMove();
+
+        if ($currentMove instanceof Move) {
+            $currentMove->setOriginalOptionsFromCell($cell);
         }
 
         $cell->setValue($value);
@@ -147,8 +157,10 @@ class Solver
             return;
         }
 
-        if ($this->getCurrentGuess() instanceof Guess) {
-            $this->getCurrentGuess()->addPropagatedCell($cell);
+        $currentMove = $this->getCurrentMove();
+
+        if ($currentMove instanceof Move) {
+            $currentMove->addPropagatedCell($cell);
         }
 
         $this->propagatedCells[$cell->getX()][$cell->getY()] = $cell;
@@ -178,12 +190,12 @@ class Solver
         }
     }
 
-    private function getCurrentGuess(): ?Guess
+    private function getCurrentMove(): ?Move
     {
-        if (0 === count($this->guesses)) {
+        if (0 === count($this->moves)) {
             return null;
         }
 
-        return end($this->guesses);
+        return end($this->moves);
     }
 }

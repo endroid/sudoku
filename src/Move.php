@@ -11,11 +11,15 @@ declare(strict_types=1);
 
 namespace Endroid\Sudoku;
 
-class Guess
+class Move
 {
     private $cell;
     private $value;
+
+    /** @var array */
     private $originalOptions;
+
+    /** @var array */
     private $propagatedCells;
 
     public function __construct(Cell $cell, int $value)

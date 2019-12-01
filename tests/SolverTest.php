@@ -17,17 +17,33 @@ use PHPUnit\Framework\TestCase;
 
 class SolverTest extends TestCase
 {
-    public function testSolver()
+    /**
+     * @dataProvider sudokuProvider
+     * @testdox Solving sudoku "$name"
+     */
+    public function testSolver($name, $sudoku)
     {
         set_time_limit(60);
 
         $factory = new Factory();
-        $examples = $factory->getExamples();
-        foreach ($examples as $example) {
-            $sudoku = $factory->createFromString($example);
-            $solver = new Solver($sudoku);
-            $solver->solve();
-            $this->assertTrue($solver->isSolved());
+        $sudoku = $factory->createFromString($sudoku);
+        $solver = new Solver($sudoku);
+        $solver->solve();
+        $this->assertTrue($solver->isSolved());
+    }
+
+    public function sudokuProvider()
+    {
+        $sudokus = [];
+
+        $factory = new Factory();
+        foreach ($factory->getExamples() as $name => $sudoku) {
+            $sudokus[] = [
+                'name' => $name,
+                'sudoku' => $sudoku,
+            ];
         }
+
+        return $sudokus;
     }
 }
