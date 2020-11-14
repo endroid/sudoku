@@ -13,14 +13,14 @@ namespace Endroid\Sudoku;
 
 class Move
 {
-    private $cell;
-    private $value;
+    private Cell $cell;
+    private int $value;
 
-    /** @var array */
-    private $originalOptions;
+    /** @var array<int, array<int, array<int, int>>> */
+    private array $originalOptions;
 
-    /** @var array */
-    private $propagatedCells;
+    /** @var array<Cell> */
+    private array $propagatedCells;
 
     public function __construct(Cell $cell, int $value)
     {
@@ -47,6 +47,7 @@ class Move
         }
     }
 
+    /** @return array<int, array<int, array<int, int>>> */
     public function getOriginalOptions(): array
     {
         return $this->originalOptions;
@@ -57,6 +58,7 @@ class Move
         $this->propagatedCells[] = $cell;
     }
 
+    /** @return array<Cell> */
     public function getPropagatedCells(): array
     {
         return $this->propagatedCells;

@@ -17,16 +17,16 @@ use Endroid\Sudoku\Exception\SudokuException;
 
 class Solver
 {
-    private $sudoku;
+    private Sudoku $sudoku;
 
-    /** @var array */
-    private $moves;
+    /** @var array<Move> */
+    private array $moves;
 
-    /** @var array */
-    private $adjacentCells;
+    /** @var array<int, array<int, array<int, array<int, Cell>>>> */
+    private array $adjacentCells;
 
-    /** @var array */
-    private $propagatedCells;
+    /** @var array<int, array<int, Cell>> */
+    private array $propagatedCells;
 
     public function __construct(Sudoku $sudoku)
     {
@@ -181,6 +181,7 @@ class Solver
         }
     }
 
+    /** @return \Iterator<Cell> */
     private function getAdjacentCells(Cell $cell): \Iterator
     {
         foreach ($this->adjacentCells[$cell->getX()][$cell->getY()] as $adjacentCells) {

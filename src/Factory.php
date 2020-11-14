@@ -55,6 +55,7 @@ class Factory
         return $sudoku;
     }
 
+    /** @return array<string, string> */
     public function getExamples(): array
     {
         return [

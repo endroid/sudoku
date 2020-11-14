@@ -13,13 +13,16 @@ namespace Endroid\Sudoku;
 
 class Section
 {
-    private $cells;
+    /** @var array<Cell> */
+    private array $cells;
 
+    /** @param array<Cell> $cells */
     public function __construct(array $cells)
     {
         $this->cells = $cells;
     }
 
+    /** @return \Iterator<Cell> */
     public function getCells(): \Iterator
     {
         foreach ($this->cells as $cell) {

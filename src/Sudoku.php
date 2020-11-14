@@ -13,17 +13,14 @@ namespace Endroid\Sudoku;
 
 class Sudoku
 {
-    /** @var array */
-    private $cells;
+    /** @var array<int, array<int, Cell>> */
+    private array $cells;
 
-    /** @var array */
-    private $sections;
+    /** @var array<Section> */
+    private array $sections;
 
-    /** @var int */
-    private $width;
-
-    /** @var int */
-    private $height;
+    private int $width;
+    private int $height;
 
     public function __construct()
     {
@@ -49,6 +46,7 @@ class Sudoku
         return $cell;
     }
 
+    /** @param array<Cell> $cells */
     public function createSection(array $cells): Section
     {
         $section = new Section($cells);
@@ -62,6 +60,7 @@ class Sudoku
         return $this->cells[$x][$y];
     }
 
+    /** @return \Iterator<Cell> */
     public function getCells(): \Iterator
     {
         foreach ($this->cells as $x => $columnCells) {
@@ -71,6 +70,7 @@ class Sudoku
         }
     }
 
+    /** @return \Iterator<Section> */
     public function getSections(): \Iterator
     {
         foreach ($this->sections as $section) {
