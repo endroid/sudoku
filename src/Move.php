@@ -13,14 +13,17 @@ namespace Endroid\Sudoku;
 
 class Move
 {
-    private Cell $cell;
-    private int $value;
+    /** @var Cell */
+    private $cell;
+
+    /** @var int */
+    private $value;
 
     /** @var array<int, array<int, array<int, int>>> */
-    private array $originalOptions;
+    private $originalOptions;
 
     /** @var array<Cell> */
-    private array $propagatedCells;
+    private $propagatedCells;
 
     public function __construct(Cell $cell, int $value)
     {

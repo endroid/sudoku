@@ -60,9 +60,9 @@ class Factory
     {
         return [
             'no_guessing' => self::NO_GUESSING,
-            'platinum_blonde' => self::PLATINUM_BLONDE,
             'golden_nugget' => self::GOLDEN_NUGGET,
             'red_dwarf' => self::RED_DWARF,
+            'platinum_blonde' => self::PLATINUM_BLONDE,
         ];
     }
 }

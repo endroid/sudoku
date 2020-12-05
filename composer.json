@@ -12,8 +12,8 @@
         }
     ],
     "require": {
-        "php": "^7.4||^8.0",
-        "endroid/installer": "^1.2.2"
+        "php": "^7.3||^8.0",
+        "endroid/installer": "^1.3.2"
     },
     "require-dev": {
         "endroid/quality": "dev-master"

@@ -15,11 +15,14 @@ use Endroid\Sudoku\Exception\NoOptionsLeftException;
 
 class Cell
 {
-    private int $x;
-    private int $y;
+    /** @var int */
+    private $x;
+
+    /** @var int */
+    private $y;
 
     /** @var array<int, int> */
-    private array $options;
+    private $options;
 
     public function __construct(int $x, int $y, int $base = 9)
     {

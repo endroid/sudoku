@@ -14,7 +14,7 @@ namespace Endroid\Sudoku;
 class Section
 {
     /** @var array<Cell> */
-    private array $cells;
+    private $cells;
 
     /** @param array<Cell> $cells */
     public function __construct(array $cells)
