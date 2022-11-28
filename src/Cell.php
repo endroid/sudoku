@@ -2,33 +2,20 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Jeroen van den Enden <info@endroid.nl>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Endroid\Sudoku;
 
 use Endroid\Sudoku\Exception\NoOptionsLeftException;
 
-class Cell
+final class Cell implements \Stringable
 {
-    /** @var int */
-    private $x;
-
-    /** @var int */
-    private $y;
-
     /** @var array<int, int> */
-    private $options;
+    private array $options;
 
-    public function __construct(int $x, int $y, int $base = 9)
-    {
-        $this->x = $x;
-        $this->y = $y;
-
+    public function __construct(
+        private int $x,
+        private int $y,
+        int $base = 9
+    ) {
         for ($option = 1; $option <= $base; ++$option) {
             $this->options[$option] = $option;
         }

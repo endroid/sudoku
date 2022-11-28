@@ -2,37 +2,18 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Jeroen van den Enden <info@endroid.nl>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Endroid\Sudoku;
 
-class Sudoku
+final class Sudoku implements \Stringable
 {
     /** @var array<int, array<int, Cell>> */
-    private $cells;
+    private array $cells = [];
 
     /** @var array<Section> */
-    private $sections;
+    private array $sections = [];
 
-    /** @var int */
-    private $width;
-
-    /** @var int */
-    private $height;
-
-    public function __construct()
-    {
-        $this->cells = [];
-        $this->sections = [];
-
-        $this->width = 0;
-        $this->height = 0;
-    }
+    private int $width = 0;
+    private int $height = 0;
 
     public function createCell(int $x, int $y): Cell
     {
@@ -63,8 +44,8 @@ class Sudoku
         return $this->cells[$x][$y];
     }
 
-    /** @return \Iterator<Cell> */
-    public function getCells(): \Iterator
+    /** @return iterable<Cell> */
+    public function getCells(): iterable
     {
         foreach ($this->cells as $x => $columnCells) {
             foreach ($columnCells as $y => $cell) {
@@ -73,8 +54,8 @@ class Sudoku
         }
     }
 
-    /** @return \Iterator<Section> */
-    public function getSections(): \Iterator
+    /** @return iterable<Section> */
+    public function getSections(): iterable
     {
         foreach ($this->sections as $section) {
             yield $section;

@@ -2,28 +2,18 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Jeroen van den Enden <info@endroid.nl>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Endroid\Sudoku;
 
-class Section
+final class Section
 {
-    /** @var array<Cell> */
-    private $cells;
-
-    /** @param array<Cell> $cells */
-    public function __construct(array $cells)
-    {
-        $this->cells = $cells;
+    public function __construct(
+        /** @var array<Cell> */
+        private array $cells
+    ) {
     }
 
-    /** @return \Iterator<Cell> */
-    public function getCells(): \Iterator
+    /** @return iterable<Cell> */
+    public function getCells(): iterable
     {
         foreach ($this->cells as $cell) {
             yield $cell;

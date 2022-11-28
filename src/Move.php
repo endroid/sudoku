@@ -2,35 +2,20 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Jeroen van den Enden <info@endroid.nl>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Endroid\Sudoku;
 
-class Move
+final class Move
 {
-    /** @var Cell */
-    private $cell;
-
-    /** @var int */
-    private $value;
-
     /** @var array<int, array<int, array<int, int>>> */
-    private $originalOptions;
+    private array $originalOptions = [];
 
     /** @var array<Cell> */
-    private $propagatedCells;
+    private array $propagatedCells = [];
 
-    public function __construct(Cell $cell, int $value)
-    {
-        $this->cell = $cell;
-        $this->value = $value;
-        $this->originalOptions = [];
-        $this->propagatedCells = [];
+    public function __construct(
+        private Cell $cell,
+        private int $value
+    ) {
     }
 
     public function getCell(): Cell

@@ -2,13 +2,6 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Jeroen van den Enden <info@endroid.nl>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Endroid\Sudoku;
 
 use Endroid\Sudoku\Exception\MoveUnavailableException;
@@ -17,23 +10,18 @@ use Endroid\Sudoku\Exception\SudokuException;
 
 class Solver
 {
-    /** @var Sudoku */
-    private $sudoku;
-
     /** @var array<Move> */
-    private $moves;
+    private array $moves = [];
 
     /** @var array<int, array<int, array<int, array<int, Cell>>>> */
-    private $adjacentCells;
+    private array $adjacentCells;
 
     /** @var array<int, array<int, Cell>> */
-    private $propagatedCells;
+    private array $propagatedCells;
 
-    public function __construct(Sudoku $sudoku)
-    {
-        $this->sudoku = $sudoku;
-        $this->moves = [];
-
+    public function __construct(
+        private Sudoku $sudoku
+    ) {
         $this->findAdjacentCells();
     }
 
@@ -182,8 +170,8 @@ class Solver
         }
     }
 
-    /** @return \Iterator<Cell> */
-    private function getAdjacentCells(Cell $cell): \Iterator
+    /** @return iterable<Cell> */
+    private function getAdjacentCells(Cell $cell): iterable
     {
         foreach ($this->adjacentCells[$cell->getX()][$cell->getY()] as $adjacentCells) {
             foreach ($adjacentCells as $adjacentCell) {

@@ -2,23 +2,17 @@
 
 declare(strict_types=1);
 
-/*
- * (c) Jeroen van den Enden <info@endroid.nl>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
- */
-
 namespace Endroid\Sudoku\Tests;
 
 use Endroid\Sudoku\Factory;
 use Endroid\Sudoku\Solver;
 use PHPUnit\Framework\TestCase;
 
-class SolverTest extends TestCase
+final class SolverTest extends TestCase
 {
     /**
      * @dataProvider sudokuProvider
+     *
      * @testdox Solving sudoku "$name"
      */
     public function testSolver($name, $sudoku)
