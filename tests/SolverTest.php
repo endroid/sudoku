@@ -26,18 +26,11 @@ final class SolverTest extends TestCase
         $this->assertTrue($solver->isSolved());
     }
 
-    public function sudokuProvider()
+    public static function sudokuProvider(): iterable
     {
-        $sudokus = [];
-
         $factory = new Factory();
         foreach ($factory->getExamples() as $name => $sudoku) {
-            $sudokus[] = [
-                'name' => $name,
-                'sudoku' => $sudoku,
-            ];
+            yield ['name' => $name, 'sudoku' => $sudoku];
         }
-
-        return $sudokus;
     }
 }
