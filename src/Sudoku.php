@@ -4,39 +4,69 @@ declare(strict_types=1);
 
 namespace Endroid\Sudoku;
 
+use Endroid\Sudoku\Exception\InvalidStringRepresentationException;
+
 final class Sudoku implements \Stringable
 {
+    private readonly int $base;
+
     /** @var array<int, array<int, Cell>> */
-    private array $cells = [];
+    private readonly array $cells;
 
-    /** @var array<Section> */
-    private array $sections = [];
+    /** @var array<int, array<int, array<int, array<int, Cell>>>> */
+    private readonly array $adjacentCells;
 
-    private int $width = 0;
-    private int $height = 0;
-
-    public function createCell(int $x, int $y): Cell
+    public function __construct(string $values)
     {
-        if (!isset($this->cells[$x][$y])) {
-            $cell = new Cell($x, $y);
-            $this->cells[$x][$y] = $cell;
-        } else {
-            $cell = $this->cells[$x][$y];
+        $values = (string) preg_replace('#[^0-9\.-]*#i', '', $values);
+
+        $this->base = (int) sqrt(strlen($values));
+        if ($this->base * $this->base !== strlen($values) || $this->base < 1) {
+            throw InvalidStringRepresentationException::create($values);
         }
 
-        $this->width = max($this->width, $x + 1);
-        $this->height = max($this->height, $y + 1);
+        $values = array_chunk(array_map('intval', str_split($values)), $this->base);
 
-        return $cell;
+        $cells = [];
+        $sections = [];
+        for ($row = 0; $row < $this->base; ++$row) {
+            for ($column = 0; $column < $this->base; ++$column) {
+                $cells[$column][$row] = new Cell($column, $row);
+                if ((int) $values[$row][$column] > 0) {
+                    $cells[$column][$row]->setValue($values[$row][$column]);
+                }
+                $sections['row-'.$row][] = $cells[$column][$row];
+                $sections['column-'.$column][] = $cells[$column][$row];
+                $sections['block-'.intval(floor($row / 3) * 3 + floor($column / 3))][] = $cells[$column][$row];
+            }
+        }
+
+        $this->cells = $cells;
+
+        $adjacentCells = [];
+        foreach ($sections as $sectionCells) {
+            /** @var Cell $cell */
+            foreach ($sectionCells as $cell) {
+                /** @var Cell $adjacentCell */
+                foreach ($sectionCells as $adjacentCell) {
+                    if ($adjacentCell !== $cell) {
+                        $adjacentCells[$cell->getX()][$cell->getY()][$adjacentCell->getX()][$adjacentCell->getY()] = $adjacentCell;
+                    }
+                }
+            }
+        }
+
+        $this->adjacentCells = $adjacentCells;
     }
 
-    /** @param array<Cell> $cells */
-    public function createSection(array $cells): Section
+    /** @return iterable<Cell> */
+    public function getAdjacentCells(Cell $cell): iterable
     {
-        $section = new Section($cells);
-        $this->sections[] = new Section($cells);
-
-        return $section;
+        foreach ($this->adjacentCells[$cell->getX()][$cell->getY()] as $adjacentCells) {
+            foreach ($adjacentCells as $adjacentCell) {
+                yield $adjacentCell;
+            }
+        }
     }
 
     public function getCell(int $x, int $y): Cell
@@ -47,18 +77,10 @@ final class Sudoku implements \Stringable
     /** @return iterable<Cell> */
     public function getCells(): iterable
     {
-        foreach ($this->cells as $x => $columnCells) {
-            foreach ($columnCells as $y => $cell) {
+        foreach ($this->cells as $columnCells) {
+            foreach ($columnCells as $cell) {
                 yield $cell;
             }
-        }
-    }
-
-    /** @return iterable<Section> */
-    public function getSections(): iterable
-    {
-        foreach ($this->sections as $section) {
-            yield $section;
         }
     }
 
@@ -66,8 +88,8 @@ final class Sudoku implements \Stringable
     {
         $string = '';
 
-        for ($y = 0; $y < $this->height; ++$y) {
-            for ($x = 0; $x < $this->width; ++$x) {
+        for ($y = 0; $y < $this->base; ++$y) {
+            for ($x = 0; $x < $this->base; ++$x) {
                 if (!isset($this->cells[$x][$y])) {
                     $string .= 'x';
                 } else {

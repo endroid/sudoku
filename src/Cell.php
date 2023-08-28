@@ -8,17 +8,12 @@ use Endroid\Sudoku\Exception\NoOptionsLeftException;
 
 final class Cell implements \Stringable
 {
-    /** @var array<int, int> */
-    private array $options;
-
     public function __construct(
-        private int $x,
-        private int $y,
-        int $base = 9
+        private readonly int $x,
+        private readonly int $y,
+        /** @var array<int, int> */
+        private array $options = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9]
     ) {
-        for ($option = 1; $option <= $base; ++$option) {
-            $this->options[$option] = $option;
-        }
     }
 
     public function getX(): int

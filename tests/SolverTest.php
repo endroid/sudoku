@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Endroid\Sudoku\Tests;
 
-use Endroid\Sudoku\Factory;
+use Endroid\Sudoku\Puzzle;
 use Endroid\Sudoku\Solver;
+use Endroid\Sudoku\Sudoku;
 use PHPUnit\Framework\TestCase;
 
 final class SolverTest extends TestCase
@@ -15,22 +16,21 @@ final class SolverTest extends TestCase
      *
      * @testdox Solving sudoku "$name"
      */
-    public function testSolver($name, $sudoku)
+    public function testSolver(string $name, string $puzzle): void
     {
         set_time_limit(60);
 
-        $factory = new Factory();
-        $sudoku = $factory->createFromString($sudoku);
-        $solver = new Solver($sudoku);
-        $solver->solve();
+        $solver = new Solver();
+        $puzzle = new Sudoku($puzzle);
+        $solver->solve($puzzle);
+
         $this->assertTrue($solver->isSolved());
     }
 
     public static function sudokuProvider(): iterable
     {
-        $factory = new Factory();
-        foreach ($factory->getExamples() as $name => $sudoku) {
-            yield ['name' => $name, 'sudoku' => $sudoku];
+        foreach (Puzzle::cases() as $puzzle) {
+            yield ['name' => $puzzle->name, 'puzzle' => $puzzle->value];
         }
     }
 }

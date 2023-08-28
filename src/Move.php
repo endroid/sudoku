@@ -13,8 +13,8 @@ final class Move
     private array $propagatedCells = [];
 
     public function __construct(
-        private Cell $cell,
-        private int $value
+        private readonly Cell $cell,
+        private readonly int $value
     ) {
     }
 

@@ -3,9 +3,8 @@
 *By [endroid](https://endroid.nl/)*
 
 [![Latest Stable Version](http://img.shields.io/packagist/v/endroid/sudoku.svg)](https://packagist.org/packages/endroid/sudoku)
-[![Build Status](https://secure.travis-ci.org/endroid/sudoku.png)](http://travis-ci.org/endroid/sudoku)
+[![Build Status](https://github.com/endroid/sudoku/workflows/CI/badge.svg)](https://github.com/endroid/sudoku/actions)
 [![Total Downloads](http://img.shields.io/packagist/dt/endroid/sudoku.svg)](https://packagist.org/packages/endroid/sudoku)
-[![Monthly Downloads](http://img.shields.io/packagist/dm/endroid/sudoku.svg)](https://packagist.org/packages/endroid/sudoku)
 [![License](http://img.shields.io/packagist/l/endroid/sudoku.svg)](https://packagist.org/packages/endroid/sudoku)
 
 The library that solves Sudoku puzzles in a jiffy.
@@ -26,7 +25,7 @@ $ composer require endroid/sudoku
 use Endroid\Sudoku\Puzzle;
 
 // Load a puzzle
-$sudoku = $this->sudokuFactory->createFromString('
+$sudoku = new Sudoku('
     000000012
     000000003
     002300400
