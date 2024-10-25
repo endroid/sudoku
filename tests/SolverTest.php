@@ -7,15 +7,14 @@ namespace Endroid\Sudoku\Tests;
 use Endroid\Sudoku\Puzzle;
 use Endroid\Sudoku\Solver;
 use Endroid\Sudoku\Sudoku;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 final class SolverTest extends TestCase
 {
-    /**
-     * @dataProvider sudokuProvider
-     *
-     * @testdox Solving sudoku "$name"
-     */
+    #[TestDox('Solving sudoku "$name"')]
+    #[DataProvider('sudokuProvider')]
     public function testSolver(string $name, string $puzzle): void
     {
         set_time_limit(60);

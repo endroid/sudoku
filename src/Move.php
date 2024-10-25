@@ -14,7 +14,7 @@ final class Move
 
     public function __construct(
         private readonly Cell $cell,
-        private readonly int $value
+        private readonly int $value,
     ) {
     }
 

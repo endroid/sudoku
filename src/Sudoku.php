@@ -6,15 +6,15 @@ namespace Endroid\Sudoku;
 
 use Endroid\Sudoku\Exception\InvalidStringRepresentationException;
 
-final class Sudoku implements \Stringable
+final readonly class Sudoku implements \Stringable
 {
-    private readonly int $base;
+    private int $base;
 
     /** @var array<int, array<int, Cell>> */
-    private readonly array $cells;
+    private array $cells;
 
     /** @var array<int, array<int, array<int, array<int, Cell>>>> */
-    private readonly array $adjacentCells;
+    private array $adjacentCells;
 
     public function __construct(string $values)
     {
