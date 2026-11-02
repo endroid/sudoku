@@ -34,44 +34,51 @@ final class Solver
     {
         $progress = false;
 
-        /** @var Cell $cell */
         foreach ($sudoku->getCells() as $cell) {
-            if ($cell->isFilled() && !isset($this->propagatedCells[$cell->getX()][$cell->getY()])) {
-                /** @var Cell $adjacentCell */
-                foreach ($sudoku->getAdjacentCells($cell) as $adjacentCell) {
-                    $this->removeOption($adjacentCell, (int) $cell->getValue());
-                }
-                $this->addPropagatedCell($cell);
-                $progress = true;
+            if (!$cell->isFilled() || null !== ($this->propagatedCells[$cell->getX()][$cell->getY()] ?? null)) {
+                continue;
             }
+
+            foreach ($sudoku->getAdjacentCells($cell) as $adjacentCell) {
+                $this->removeOption($adjacentCell, (int) $cell->getValue());
+            }
+            $this->addPropagatedCell($cell);
+            $progress = true;
         }
 
         if ($progress) {
             $this->reduceOptions($sudoku);
-        } elseif (!$this->isSolved()) {
+            return;
+        }
+
+        if (!$this->isSolved()) {
             $this->solveByGuessing($sudoku);
         }
     }
 
     private function solveByGuessing(Sudoku $sudoku): void
     {
-        /** @var Cell $cell */
         foreach ($sudoku->getCells() as $cell) {
-            if (!$cell->isFilled()) {
-                foreach ($cell->getOptions() as $option) {
-                    $this->move($cell, $option);
-                    try {
-                        $this->solve($sudoku);
-                    } catch (SudokuException $exception) {
-                    }
-                    if (!$this->isSolved()) {
-                        $this->undoMove($sudoku);
-                    } else {
-                        return;
-                    }
-                }
-                throw new NoOptionsLeftException();
+            if ($cell->isFilled()) {
+                continue;
             }
+
+            foreach ($cell->getOptions() as $option) {
+                $this->move($cell, $option);
+                try {
+                    $this->solve($sudoku);
+                } catch (SudokuException) {
+                    $this->undoMove($sudoku);
+                    continue;
+                }
+
+                if ($this->isSolved()) {
+                    return;
+                }
+
+                $this->undoMove($sudoku);
+            }
+            throw new NoOptionsLeftException();
         }
     }
 
@@ -133,10 +140,6 @@ final class Solver
 
     private function addPropagatedCell(Cell $cell): void
     {
-        if (isset($this->propagatedCells[$cell->getX()][$cell->getY()])) {
-            return;
-        }
-
         $currentMove = $this->getCurrentMove();
 
         if ($currentMove instanceof Move) {

@@ -15,8 +15,7 @@ final class Move
     public function __construct(
         private readonly Cell $cell,
         private readonly int $value,
-    ) {
-    }
+    ) {}
 
     public function getCell(): Cell
     {
@@ -30,9 +29,7 @@ final class Move
 
     public function setOriginalOptionsFromCell(Cell $cell): void
     {
-        if (!isset($this->originalOptions[$cell->getX()][$cell->getY()])) {
-            $this->originalOptions[$cell->getX()][$cell->getY()] = $cell->getOptions();
-        }
+        $this->originalOptions[$cell->getX()][$cell->getY()] ??= $cell->getOptions();
     }
 
     /** @return array<int, array<int, array<int, int>>> */
