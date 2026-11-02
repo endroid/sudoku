@@ -148,10 +148,6 @@ final class Solver
 
     private function getCurrentMove(): ?Move
     {
-        if (0 === count($this->moves)) {
-            return null;
-        }
-
-        return end($this->moves);
+        return array_last($this->moves);
     }
 }
