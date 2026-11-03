@@ -13,8 +13,7 @@ final class Cell implements \Stringable
         private readonly int $y,
         /** @var array<int, int> */
         private array $options = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9],
-    ) {
-    }
+    ) {}
 
     public function getX(): int
     {
@@ -34,7 +33,7 @@ final class Cell implements \Stringable
 
     public function hasOption(int $option): bool
     {
-        return isset($this->options[$option]);
+        return array_key_exists($option, $this->options);
     }
 
     public function removeOption(int $option): void
@@ -46,7 +45,7 @@ final class Cell implements \Stringable
         }
     }
 
-    /** @return array<int> */
+    /** @return array<int, int> */
     public function getOptions(): array
     {
         return $this->options;
@@ -60,7 +59,7 @@ final class Cell implements \Stringable
     public function getValue(): ?int
     {
         if (1 === count($this->options)) {
-            return current($this->options);
+            return array_first($this->options);
         }
 
         return null;
@@ -76,8 +75,9 @@ final class Cell implements \Stringable
         return !$this->isEmpty();
     }
 
+    #[\Override]
     public function __toString(): string
     {
-        return '['.$this->x.','.$this->y.':'.implode(',', $this->options).']';
+        return '[' . $this->x . ',' . $this->y . ':' . implode(',', $this->options) . ']';
     }
 }

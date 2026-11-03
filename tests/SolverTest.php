@@ -26,6 +26,15 @@ final class SolverTest extends TestCase
         $this->assertTrue($solver->isSolved());
     }
 
+    public function testCellOutsidePuzzleIsRejected(): void
+    {
+        $sudoku = new Sudoku(Puzzle::NoGuessing->value);
+        self::assertSame(8, $sudoku->getCell(8, 2)->getX());
+
+        $this->expectException(\OutOfBoundsException::class);
+        $sudoku->getCell(9, 2);
+    }
+
     public static function sudokuProvider(): iterable
     {
         foreach (Puzzle::cases() as $puzzle) {
